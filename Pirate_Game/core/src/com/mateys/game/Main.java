@@ -8,6 +8,7 @@ import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.math.Rectangle;
+import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.utils.ScreenUtils;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.g2d.freetype.FreeTypeFontGenerator;
@@ -24,6 +25,9 @@ public class Main extends ApplicationAdapter {
 	private BitmapFont scoreText;
 	private FreeTypeFontGenerator fontGenerator;
 	private FreeTypeFontGenerator.FreeTypeFontParameter  fontParameter;
+	private Vector2 playerPosition;
+	private Vector2 playerMovement;
+	private float MOVESPEED;
 
 
 	
@@ -46,14 +50,21 @@ public class Main extends ApplicationAdapter {
 		camera.setToOrtho(false, 800, 480);
 
 		batch = new SpriteBatch();
-		//img = new Texture("badlogic.jpg");
+		img = new Texture("badlogic.jpg");
 		playerShip = new Rectangle();
 		//playerShip.width = 64;
 		//playerShip.height = 64;
 
+		// initialise the player position
 		playerShip.x = (camera.viewportWidth / 2) - (playerShip.width / 2); // center the bucket horizontally
 		playerShip.y = (camera.viewportHeight / 2) - (playerShip.height / 2); // bottom left corner of the bucket is 20 pixels above the bottom screen edge
+		playerPosition = new Vector2(playerShip.x, playerShip.y);
 
+		// initialise default movement speed
+		MOVESPEED = 200;
+
+		// initialise movement vector
+		playerMovement = new Vector2(0,0);
 	}
 
 	@Override
@@ -64,19 +75,23 @@ public class Main extends ApplicationAdapter {
 		batch.begin();
 		batch.draw(playerShipImage, playerShip.x, playerShip.y);
 
+		playerMovement.set(0, 0);
 		// input for player movement
 		if(Gdx.input.isKeyPressed(Input.Keys.A)){
-			playerShip.x -= 200 * Gdx.graphics.getDeltaTime();
+			playerMovement.add(-1, 0);
 		}
 		if(Gdx.input.isKeyPressed(Input.Keys.D)){
-			playerShip.x += 200 * Gdx.graphics.getDeltaTime();
+			playerMovement.add(1, 0);
 		}
 		if(Gdx.input.isKeyPressed(Input.Keys.W)){
-			playerShip.y += 200 * Gdx.graphics.getDeltaTime();
+			playerMovement.add(0, 1);
 		}
 		if(Gdx.input.isKeyPressed(Input.Keys.S)){
-			playerShip.y -= 200 * Gdx.graphics.getDeltaTime();
+			playerMovement.add(0, -1);
+
 		}
+		//update the player's position
+		playerShip.setPosition(playerPosition.mulAdd(((playerMovement.nor()).scl(MOVESPEED)), Gdx.graphics.getDeltaTime())); // set ship position at 'position' + (normalised 'movement' * 'MOVESPEED') * DeltaTime
 
 		//timer for score over time
 		if (time > period){
