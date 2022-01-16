@@ -18,18 +18,14 @@ public class GameScreen extends ScreenAdapter {
 	SpriteBatch batch;
 	Texture img;
 	private OrthographicCamera camera;
-	private Rectangle playerShip;
-	private Texture playerShipImage;
 	private int score;
 	private float period = 1f;
 	private float time = 0f;
 	private BitmapFont scoreText;
 	private FreeTypeFontGenerator fontGenerator;
 	private FreeTypeFontGenerator.FreeTypeFontParameter  fontParameter;
-	private Vector2 playerPosition;
-	private Vector2 playerMovement;
-	private float MOVESPEED;
 	private Mateys game;
+	private PlayerShip player;
 
 
 	public GameScreen (Mateys game) {
@@ -45,29 +41,20 @@ public class GameScreen extends ScreenAdapter {
 		fontParameter.color = Color.WHITE;
 		scoreText = fontGenerator.generateFont(fontParameter);
 
-		// load the ship image
-		playerShipImage = new Texture(Gdx.files.internal("PlayerShip.png"));
-
 
 		camera = new OrthographicCamera();
 		camera.setToOrtho(false, 800, 480);
 
 		batch = new SpriteBatch();
 		img = new Texture("badlogic.jpg");
-		playerShip = new Rectangle();
 		//playerShip.width = 64;
 		//playerShip.height = 64;
 
-		// initialise the player position
-		playerShip.x = (camera.viewportWidth / 2) - (playerShip.width / 2); // center the bucket horizontally
-		playerShip.y = (camera.viewportHeight / 2) - (playerShip.height / 2); // bottom left corner of the bucket is 20 pixels above the bottom screen edge
-		playerPosition = new Vector2(playerShip.x, playerShip.y);
+		// initialise the player
+		float centerX = (camera.viewportWidth / 2);
+		float centerY = (camera.viewportHeight / 2);
+		player = new PlayerShip(centerX, centerY);
 
-		// initialise default movement speed
-		MOVESPEED = 200;
-
-		// initialise movement vector
-		playerMovement = new Vector2(0,0);
 	}
 
 	@Override
@@ -76,25 +63,26 @@ public class GameScreen extends ScreenAdapter {
 		camera.update();
 		batch.setProjectionMatrix(camera.combined);
 		batch.begin();
-		batch.draw(playerShipImage, playerShip.x, playerShip.y);
+		batch.draw(player.playerShipImage, player.getX(), player.getY());
 
-		playerMovement.set(0, 0);
+		player.playerMovement.set(0, 0);
 		// input for player movement
 		if(Gdx.input.isKeyPressed(Input.Keys.A)){
-			playerMovement.add(-1, 0);
+			player.playerMovement.add(-1, 0);
 		}
 		if(Gdx.input.isKeyPressed(Input.Keys.D)){
-			playerMovement.add(1, 0);
+			player.playerMovement.add(1, 0);
 		}
 		if(Gdx.input.isKeyPressed(Input.Keys.W)){
-			playerMovement.add(0, 1);
+			player.playerMovement.add(0, 1);
 		}
 		if(Gdx.input.isKeyPressed(Input.Keys.S)){
-			playerMovement.add(0, -1);
+			player.playerMovement.add(0, -1);
 
 		}
-		//update the player's position
-		playerShip.setPosition(playerPosition.mulAdd(((playerMovement.nor()).scl(MOVESPEED)), Gdx.graphics.getDeltaTime())); // set ship position at 'position' + (normalised 'movement' * 'MOVESPEED') * DeltaTime
+
+		player.render();
+
 
 		//timer for score over time
 		if (time > period){
@@ -114,7 +102,7 @@ public class GameScreen extends ScreenAdapter {
 	
 	@Override
 	public void dispose () {
-		playerShipImage.dispose();
+		player.dispose();
 		batch.dispose();
 		img.dispose();
 	}
