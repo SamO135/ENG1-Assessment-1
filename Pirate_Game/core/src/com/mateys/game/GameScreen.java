@@ -2,6 +2,7 @@ package com.mateys.game;
 
 import com.badlogic.gdx.ApplicationAdapter;
 import com.badlogic.gdx.Input;
+import com.badlogic.gdx.ScreenAdapter;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.Texture;
@@ -13,7 +14,7 @@ import com.badlogic.gdx.utils.ScreenUtils;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.g2d.freetype.FreeTypeFontGenerator;
 
-public class Main extends ApplicationAdapter {
+public class GameScreen extends ScreenAdapter {
 	SpriteBatch batch;
 	Texture img;
 	private OrthographicCamera camera;
@@ -28,11 +29,13 @@ public class Main extends ApplicationAdapter {
 	private Vector2 playerPosition;
 	private Vector2 playerMovement;
 	private float MOVESPEED;
+	private Mateys game;
 
 
-	
-	@Override
-	public void create () {
+	public GameScreen (Mateys game) {
+
+		this.game = game;
+
 		//create the score text font
 		fontGenerator = new FreeTypeFontGenerator(Gdx.files.internal("BlackSamsGold.ttf"));
 		fontParameter = new FreeTypeFontGenerator.FreeTypeFontParameter();
@@ -68,7 +71,7 @@ public class Main extends ApplicationAdapter {
 	}
 
 	@Override
-	public void render () {
+	public void render (float delta) {
 		ScreenUtils.clear(0f, 0.4f, 0.6f, 1);
 		camera.update();
 		batch.setProjectionMatrix(camera.combined);
