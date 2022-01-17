@@ -8,6 +8,11 @@ import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
+import com.badlogic.gdx.maps.tiled.TiledMap;
+import com.badlogic.gdx.maps.tiled.TiledMapRenderer;
+import com.badlogic.gdx.maps.tiled.TmxMapLoader;
+import com.badlogic.gdx.maps.tiled.renderers.OrthoCachedTiledMapRenderer;
+import com.badlogic.gdx.maps.tiled.renderers.OrthogonalTiledMapRenderer;
 import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.utils.ScreenUtils;
@@ -26,11 +31,18 @@ public class GameScreen extends ScreenAdapter {
 	private FreeTypeFontGenerator.FreeTypeFontParameter  fontParameter;
 	private Mateys game;
 	private PlayerShip player;
+	TiledMap tiledMap;
+	TiledMapRenderer tiledMapRenderer;
+
+
 
 
 	public GameScreen (Mateys game) {
-
 		this.game = game;
+	}
+
+	@Override
+	public void show() {
 
 		//create the score text font
 		fontGenerator = new FreeTypeFontGenerator(Gdx.files.internal("BlackSamsGold.ttf"));
@@ -43,30 +55,39 @@ public class GameScreen extends ScreenAdapter {
 
 
 		camera = new OrthographicCamera();
-		camera.setToOrtho(false, 800, 480);
+		camera.setToOrtho(false, 1500, 1500);
+		// camera.setToOrtho(false, 800, 480);
 
-		batch = new SpriteBatch();
-		img = new Texture("badlogic.jpg");
-		//playerShip.width = 64;
-		//playerShip.height = 64;
 
 		// initialise the player
 		float centerX = (camera.viewportWidth / 2);
 		float centerY = (camera.viewportHeight / 2);
 		player = new PlayerShip(centerX, centerY);
 
+
+		// load map
+		tiledMap = new TmxMapLoader().load("PirateMap.tmx");
+		tiledMapRenderer = new OrthogonalTiledMapRenderer(tiledMap);
 	}
+
 
 	@Override
 	public void render (float delta) {
+
 		ScreenUtils.clear(0f, 0.4f, 0.6f, 1);
+
 		camera.update();
-		batch.setProjectionMatrix(camera.combined);
-		batch.begin();
-		batch.draw(player.playerShipImage, player.getX(), player.getY());
+
+		game.batch.setProjectionMatrix(camera.combined);
+
+		// begin a new batch
+		game.batch.begin();
+		game.batch.draw(player.playerShipImage, player.getX(), player.getY());
+
 
 		player.playerMovement.set(0, 0);
-		// input for player movement
+
+		// process user input
 		if(Gdx.input.isKeyPressed(Input.Keys.A)){
 			player.playerMovement.add(-1, 0);
 		}
@@ -83,6 +104,10 @@ public class GameScreen extends ScreenAdapter {
 
 		player.render();
 
+		tiledMapRenderer.setView(camera);
+		tiledMapRenderer.render();
+
+		camera.position.set(player.getX(), player.getY(), 0);
 
 		//timer for score over time
 		if (time > period){
@@ -93,11 +118,9 @@ public class GameScreen extends ScreenAdapter {
 		}
 
 		// drawing the score to the screen
-		scoreText.draw(batch, "Score: " + score, 20f, camera.viewportHeight - 20f);
+		scoreText.draw(game.batch, "Score: " + score, 20f, camera.viewportHeight - 20f);
 
-
-
-		batch.end();
+		game.batch.end();
 	}
 	
 	@Override

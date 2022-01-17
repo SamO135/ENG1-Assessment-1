@@ -7,7 +7,7 @@ import com.badlogic.gdx.math.Vector2;
 
 public class PlayerShip {
 
-    private Rectangle playerShip;
+    private final Rectangle playerShip;
     public Texture playerShipImage;
     private Vector2 playerPosition;
     public Vector2 playerMovement;
@@ -31,13 +31,9 @@ public class PlayerShip {
 
     public void render() {
         // set ship position at 'position' + (normalised 'movement' * 'MOVE_SPEED') * DeltaTime
-        float MOVE_SPEED = 200;
+        float MOVE_SPEED = 500;
         playerShip.setPosition(playerPosition.mulAdd(((playerMovement.nor()).scl(MOVE_SPEED)), Gdx.graphics.getDeltaTime()));
 
-    }
-
-    public void dispose() {
-        playerShipImage.dispose();
     }
 
     public float getX() {
@@ -48,4 +44,7 @@ public class PlayerShip {
         return playerPosition.y;
     }
 
+    public void dispose() {
+        playerShipImage.dispose();
+    }
 }
