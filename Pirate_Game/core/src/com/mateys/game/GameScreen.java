@@ -1,6 +1,5 @@
 package com.mateys.game;
 
-import com.badlogic.gdx.ApplicationAdapter;
 import com.badlogic.gdx.Input;
 import com.badlogic.gdx.ScreenAdapter;
 import com.badlogic.gdx.graphics.Color;
@@ -11,10 +10,7 @@ import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.maps.tiled.TiledMap;
 import com.badlogic.gdx.maps.tiled.TiledMapRenderer;
 import com.badlogic.gdx.maps.tiled.TmxMapLoader;
-import com.badlogic.gdx.maps.tiled.renderers.OrthoCachedTiledMapRenderer;
 import com.badlogic.gdx.maps.tiled.renderers.OrthogonalTiledMapRenderer;
-import com.badlogic.gdx.math.Rectangle;
-import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.utils.ScreenUtils;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.g2d.freetype.FreeTypeFontGenerator;
@@ -47,7 +43,7 @@ public class GameScreen extends ScreenAdapter {
 		//create the score text font
 		fontGenerator = new FreeTypeFontGenerator(Gdx.files.internal("BlackSamsGold.ttf"));
 		fontParameter = new FreeTypeFontGenerator.FreeTypeFontParameter();
-		fontParameter.size = 30;
+		fontParameter.size = 100;
 		fontParameter.borderWidth = 2f;
 		fontParameter.borderColor = Color.BLACK;
 		fontParameter.color = Color.WHITE;
@@ -70,7 +66,6 @@ public class GameScreen extends ScreenAdapter {
 		tiledMapRenderer = new OrthogonalTiledMapRenderer(tiledMap);
 	}
 
-
 	@Override
 	public void render (float delta) {
 
@@ -80,36 +75,22 @@ public class GameScreen extends ScreenAdapter {
 
 		game.batch.setProjectionMatrix(camera.combined);
 
+
 		// begin a new batch
 		game.batch.begin();
-		game.batch.draw(player.playerShipImage, player.getX(), player.getY());
 
+		// Update and Render Player Ship
+		player.update();
+		player.render(game.batch);
 
-		player.playerMovement.set(0, 0);
-
-		// process user input
-		if(Gdx.input.isKeyPressed(Input.Keys.A)){
-			player.playerMovement.add(-1, 0);
-		}
-		if(Gdx.input.isKeyPressed(Input.Keys.D)){
-			player.playerMovement.add(1, 0);
-		}
-		if(Gdx.input.isKeyPressed(Input.Keys.W)){
-			player.playerMovement.add(0, 1);
-		}
-		if(Gdx.input.isKeyPressed(Input.Keys.S)){
-			player.playerMovement.add(0, -1);
-
-		}
-
-		player.render();
-
+		// Update and Render TileMap
 		tiledMapRenderer.setView(camera);
 		tiledMapRenderer.render();
 
+		// Update Camera Position
 		camera.position.set(player.getX(), player.getY(), 0);
 
-		//timer for score over time
+		// Update Timer
 		if (time > period){
 			time = 0f;
 			score += 1;
@@ -117,9 +98,10 @@ public class GameScreen extends ScreenAdapter {
 			time += Gdx.graphics.getDeltaTime();
 		}
 
-		// drawing the score to the screen
-		scoreText.draw(game.batch, "Score: " + score, 20f, camera.viewportHeight - 20f);
+		// Draw Score to Screen
+		scoreText.draw(game.batch, "Score: " + score, camera.position.x - 700f, camera.position.y + 700f);
 
+		// End Batch
 		game.batch.end();
 	}
 	

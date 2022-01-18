@@ -1,7 +1,9 @@
 package com.mateys.game;
 
 import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.Input;
 import com.badlogic.gdx.graphics.Texture;
+import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.math.Vector2;
 
@@ -29,11 +31,33 @@ public class PlayerShip {
 
     }
 
-    public void render() {
+    public void update() {
+
+        this.playerMovement.set(0, 0);
+
+        // process user input
+        if(Gdx.input.isKeyPressed(Input.Keys.A)){
+            this.playerMovement.add(-1, 0);
+        }
+        if(Gdx.input.isKeyPressed(Input.Keys.D)){
+            this.playerMovement.add(1, 0);
+        }
+        if(Gdx.input.isKeyPressed(Input.Keys.W)){
+            this.playerMovement.add(0, 1);
+        }
+        if(Gdx.input.isKeyPressed(Input.Keys.S)){
+            this.playerMovement.add(0, -1);
+        }
+
         // set ship position at 'position' + (normalised 'movement' * 'MOVE_SPEED') * DeltaTime
         float MOVE_SPEED = 500;
-        playerShip.setPosition(playerPosition.mulAdd(((playerMovement.nor()).scl(MOVE_SPEED)), Gdx.graphics.getDeltaTime()));
+        this.playerShip.setPosition(playerPosition.mulAdd(((playerMovement.nor()).scl(MOVE_SPEED)), Gdx.graphics.getDeltaTime()));
 
+    }
+
+
+    public void render(SpriteBatch batch) {
+        batch.draw(this.playerShipImage, this.getX(), this.getY());
     }
 
     public float getX() {
