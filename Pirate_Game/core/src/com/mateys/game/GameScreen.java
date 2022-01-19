@@ -79,6 +79,25 @@ public class GameScreen extends ScreenAdapter {
 		// begin a new batch
 		game.batch.begin();
 
+		// process user input
+		player.movement.set(0, 0);
+		if(Gdx.input.isKeyPressed(Input.Keys.A)){
+			player.movement.add(-1, 0);
+			player.rotation = 270;
+		}
+		if(Gdx.input.isKeyPressed(Input.Keys.D)){
+			player.movement.add(1, 0);
+			player.rotation = 90;
+		}
+		if(Gdx.input.isKeyPressed(Input.Keys.W)){
+			player.movement.add(0, 1);
+			player.rotation = 180;
+		}
+		if(Gdx.input.isKeyPressed(Input.Keys.S)){
+			player.movement.add(0, -1);
+			player.rotation = 0;
+		}
+
 		// Update and Render Player Ship
 		player.update();
 		player.render(game.batch);
