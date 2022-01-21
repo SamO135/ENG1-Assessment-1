@@ -7,6 +7,7 @@ import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
+import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.maps.tiled.TiledMap;
 import com.badlogic.gdx.maps.tiled.TiledMapRenderer;
 import com.badlogic.gdx.maps.tiled.TmxMapLoader;
@@ -14,10 +15,11 @@ import com.badlogic.gdx.maps.tiled.renderers.OrthogonalTiledMapRenderer;
 import com.badlogic.gdx.utils.ScreenUtils;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.g2d.freetype.FreeTypeFontGenerator;
+import java.util.ArrayList;
+
 
 public class GameScreen extends ScreenAdapter {
 	SpriteBatch batch;
-	Texture img;
 	private OrthographicCamera camera;
 	private int score;
 	private float period = 1f;
@@ -29,6 +31,8 @@ public class GameScreen extends ScreenAdapter {
 	private PlayerShip player;
 	TiledMap tiledMap;
 	TiledMapRenderer tiledMapRenderer;
+	private ArrayList<Entity> allEntities;
+
 
 
 
@@ -55,56 +59,65 @@ public class GameScreen extends ScreenAdapter {
 		// camera.setToOrtho(false, 800, 480);
 
 
-		// initialise the player
-		float centerX = (camera.viewportWidth / 2);
-		float centerY = (camera.viewportHeight / 2);
-		player = new PlayerShip(centerX, centerY);
-
 
 		// load map
 		tiledMap = new TmxMapLoader().load("PirateMap.tmx");
 		tiledMapRenderer = new OrthogonalTiledMapRenderer(tiledMap);
+
+		//Initialise entities list
+		allEntities = new ArrayList<Entity>();
+
+		// initialise the player
+		float centerX = (camera.viewportWidth / 2);
+		float centerY = (camera.viewportHeight / 2);
+		player = new PlayerShip(centerX, centerY);
+		allEntities.add(player);
 	}
+
+
+
+
 
 	@Override
 	public void render (float delta) {
-
-		ScreenUtils.clear(0f, 0.4f, 0.6f, 1);
+		ScreenUtils.clear(0.67f, 0.91f, 1f, 1);
 
 		camera.update();
 
 		game.batch.setProjectionMatrix(camera.combined);
 
 
-		// begin a new batch
-		game.batch.begin();
-
 		// process user input
 		player.movement.set(0, 0);
-		if(Gdx.input.isKeyPressed(Input.Keys.A)){
-			player.movement.add(-1, 0);
-			player.rotation = 270;
+		if(Gdx.input.isKeyPressed(Input.Keys.A)){player.moveLeft();}
+		if(Gdx.input.isKeyPressed(Input.Keys.D)){player.moveRight();}
+		if(Gdx.input.isKeyPressed(Input.Keys.W)){player.moveUp();}
+		if(Gdx.input.isKeyPressed(Input.Keys.S)){player.moveDown();}
+
+
+		if(Gdx.input.isKeyJustPressed(Input.Keys.LEFT)){
+			Bullet newBullet = new Bullet(player.getX(), player.getY());
+			allEntities.add(newBullet);
+			newBullet.shootLeft();
 		}
-		if(Gdx.input.isKeyPressed(Input.Keys.D)){
-			player.movement.add(1, 0);
-			player.rotation = 90;
+		else if(Gdx.input.isKeyJustPressed(Input.Keys.RIGHT)){
+			Bullet newBullet = new Bullet(player.getX(), player.getY());
+			allEntities.add(newBullet);
+			newBullet.shootRight();
 		}
-		if(Gdx.input.isKeyPressed(Input.Keys.W)){
-			player.movement.add(0, 1);
-			player.rotation = 180;
+		else if(Gdx.input.isKeyJustPressed(Input.Keys.UP)){
+			Bullet newBullet = new Bullet(player.getX(), player.getY());
+			allEntities.add(newBullet);
+			newBullet.shootUp();
 		}
-		if(Gdx.input.isKeyPressed(Input.Keys.S)){
-			player.movement.add(0, -1);
-			player.rotation = 0;
+		else if(Gdx.input.isKeyJustPressed(Input.Keys.DOWN)){
+			Bullet newBullet = new Bullet(player.getX(), player.getY());
+			allEntities.add(newBullet);
+			newBullet.shootDown();
 		}
 
-		// Update and Render Player Ship
-		player.update();
-		player.render(game.batch);
 
-		// Update and Render TileMap
-		tiledMapRenderer.setView(camera);
-		tiledMapRenderer.render();
+
 
 		// Update Camera Position
 		camera.position.set(player.getX(), player.getY(), 0);
@@ -115,6 +128,23 @@ public class GameScreen extends ScreenAdapter {
 			score += 1;
 		} else{
 			time += Gdx.graphics.getDeltaTime();
+		}
+
+
+		// begin a new batch
+		game.batch.begin();
+
+
+		// Update and Render TileMap
+		tiledMapRenderer.setView(camera);
+		tiledMapRenderer.render();
+
+
+
+		//Update and Render all Entities
+		for(Entity entity : allEntities){
+			entity.update();
+			entity.render(game.batch);
 		}
 
 		// Draw Score to Screen
@@ -128,6 +158,5 @@ public class GameScreen extends ScreenAdapter {
 	public void dispose () {
 		player.dispose();
 		batch.dispose();
-		img.dispose();
 	}
 }
