@@ -83,6 +83,16 @@ public class GameScreen extends ScreenAdapter {
 		tiledMap = new TmxMapLoader().load("PirateMap.tmx");
 		tiledMapRenderer = new OrthogonalTiledMapRenderer(tiledMap);
 
+		world = new World(new Vector2(0, 0), true);
+		b2dr = new Box2DDebugRenderer();
+
+		for (MapObject object: tiledMap.getLayers().get(3).getObjects().getByType(RectangleMapObject.class)) {
+			Rectangle rect = ((RectangleMapObject) object).getRectangle();
+			rects.add(rect);
+
+		}
+
+
 		//Initialise entities list
 		allEntities = new ArrayList<Entity>();
 
@@ -94,25 +104,6 @@ public class GameScreen extends ScreenAdapter {
 	}
 
 
-
-
-		// load map
-		tiledMap = new TmxMapLoader().load("PirateMap.tmx");
-		tiledMapRenderer = new OrthogonalTiledMapRenderer(tiledMap);
-
-
-		world = new World(new Vector2(0, 0), true);
-		b2dr = new Box2DDebugRenderer();
-
-
-		for (MapObject object: tiledMap.getLayers().get(3).getObjects().getByType(RectangleMapObject.class)) {
-			Rectangle rect = ((RectangleMapObject) object).getRectangle();
-			rects.add(rect);
-
-		}
-
-
-	}
 
 
 
@@ -134,7 +125,7 @@ public class GameScreen extends ScreenAdapter {
 
 		Boolean canMove = true;
 
-		if(Gdx.input.isKeyPressed(Input.Keys.A)){
+		if (Gdx.input.isKeyPressed(Input.Keys.A)) {
 			player.rotation = 270;
 
 			float newXPos = player.getX() - 32;
@@ -150,7 +141,7 @@ public class GameScreen extends ScreenAdapter {
 			}
 
 		}
-		if(Gdx.input.isKeyPressed(Input.Keys.D)){
+		if (Gdx.input.isKeyPressed(Input.Keys.D)) {
 			player.rotation = 90;
 
 			float newXPos = player.getX() + 16;
@@ -166,7 +157,7 @@ public class GameScreen extends ScreenAdapter {
 			}
 
 		}
-		if(Gdx.input.isKeyPressed(Input.Keys.W)){
+		if (Gdx.input.isKeyPressed(Input.Keys.W)) {
 			player.rotation = 180;
 
 			float newYPos = player.getY() + 32;
@@ -182,7 +173,7 @@ public class GameScreen extends ScreenAdapter {
 			}
 
 		}
-		if(Gdx.input.isKeyPressed(Input.Keys.S)){
+		if (Gdx.input.isKeyPressed(Input.Keys.S)) {
 			player.rotation = 0;
 
 			float newYPos = player.getY() - 32;
@@ -196,46 +187,38 @@ public class GameScreen extends ScreenAdapter {
 			if (canMove) {
 				player.movement.add(0, -1);
 			}
+		}
 
 
-		if(Gdx.input.isKeyJustPressed(Input.Keys.LEFT)){
+		if (Gdx.input.isKeyJustPressed(Input.Keys.LEFT)) {
 			Bullet newBullet = new Bullet(player.getX(), player.getY());
 			allEntities.add(newBullet);
 			newBullet.shootLeft();
-		}
-		else if(Gdx.input.isKeyJustPressed(Input.Keys.RIGHT)){
+		} else if (Gdx.input.isKeyJustPressed(Input.Keys.RIGHT)) {
 			Bullet newBullet = new Bullet(player.getX(), player.getY());
 			allEntities.add(newBullet);
 			newBullet.shootRight();
-		}
-		else if(Gdx.input.isKeyJustPressed(Input.Keys.UP)){
+		} else if (Gdx.input.isKeyJustPressed(Input.Keys.UP)) {
 			Bullet newBullet = new Bullet(player.getX(), player.getY());
 			allEntities.add(newBullet);
 			newBullet.shootUp();
-		}
-		else if(Gdx.input.isKeyJustPressed(Input.Keys.DOWN)){
+		} else if (Gdx.input.isKeyJustPressed(Input.Keys.DOWN)) {
 			Bullet newBullet = new Bullet(player.getX(), player.getY());
 			allEntities.add(newBullet);
 			newBullet.shootDown();
 		}
 
 
-
-
 		// Update Camera Position
 		camera.position.set(player.getX(), player.getY(), 0);
 
 		// Update Timer
-		if (time > period){
+		if (time > period) {
 			time = 0f;
 			score += 1;
-		} else{
+		} else {
 			time += Gdx.graphics.getDeltaTime();
 		}
-
-
-		// begin a new batch
-		game.batch.begin();
 
 
 		// Update and Render TileMap
@@ -243,9 +226,8 @@ public class GameScreen extends ScreenAdapter {
 		tiledMapRenderer.render();
 
 
-
 		//Update and Render all Entities
-		for(Entity entity : allEntities){
+		for (Entity entity : allEntities) {
 			entity.update();
 			entity.render(game.batch);
 		}
@@ -259,10 +241,11 @@ public class GameScreen extends ScreenAdapter {
 		// End Batch
 		game.batch.end();
 	}
-	
+
 	@Override
-	public void dispose () {
+	public void dispose() {
 		player.dispose();
-		batch.dispose();
+		tiledMap.dispose();
 	}
+
 }
