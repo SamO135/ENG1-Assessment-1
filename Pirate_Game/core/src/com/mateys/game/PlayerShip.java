@@ -1,22 +1,19 @@
 package com.mateys.game;
 
 import com.badlogic.gdx.Gdx;
-import com.badlogic.gdx.Input;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
-import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.math.Vector2;
 
-public class PlayerShip {
-
-    public Texture image;
-    private Vector2 position;
+public class PlayerShip extends Entity{
+    private int MOVE_SPEED = 500;
     public Vector2 movement;
     private Rectangle playerRect;
     TextureRegion textureRegion;
     int MOVE_SPEED = 500;
     int rotation;
+
 
     public PlayerShip(float x, float y) {
         this.image = new Texture(Gdx.files.internal("PlayerShip.png"));
@@ -39,20 +36,34 @@ public class PlayerShip {
 
 
     public void render(SpriteBatch batch) {
-        batch.draw(textureRegion, position.x - image.getWidth()/2, position.y - image.getHeight()/2, textureRegion.getRegionWidth()/2, textureRegion.getRegionHeight()/2, image.getWidth(), image.getHeight(), 1, 1, this.rotation);
+        batch.draw(textureRegion, this.position.x - this.image.getWidth()/2, this.position.y - this.image.getHeight()/2, this.textureRegion.getRegionWidth()/2, this.textureRegion.getRegionHeight()/2, this.image.getWidth(), this.image.getHeight(), 1, 1, this.rotation);
+        //sprite.setPosition(this.position.x, this.position.y);
+        //sprite.draw(batch);
+        //sprite.setRotation(this.rotation);
     }
 
-    public float getX() {
-        return position.x;
+    public void moveLeft(){
+        this.movement.add(-1, 0);
+        this.rotation = 270;
+    }
+    public void moveRight(){
+        this.movement.add(1, 0);
+        this.rotation = 90;
     }
 
-    public float getY() {
-        return position.y;
-    }
 
     public Rectangle getPlayerRect() { return playerRect; }
 
-    public void dispose() {
-        image.dispose();
+
+    public void moveUp(){
+        this.movement.add(0, 1);
+        this.rotation = 180;
     }
+    public void moveDown(){
+        this.movement.add(0, -1);
+        this.rotation = 0;
+    }
+
+
+    public void dispose() {this.image.dispose();}
 }

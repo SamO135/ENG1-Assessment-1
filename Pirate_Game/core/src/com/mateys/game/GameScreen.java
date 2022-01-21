@@ -11,6 +11,10 @@ import com.badlogic.gdx.maps.MapLayer;
 import com.badlogic.gdx.maps.MapObject;
 import com.badlogic.gdx.maps.objects.RectangleMapObject;
 import com.badlogic.gdx.maps.tiled.*;
+import com.badlogic.gdx.graphics.g2d.TextureRegion;
+import com.badlogic.gdx.maps.tiled.TiledMap;
+import com.badlogic.gdx.maps.tiled.TiledMapRenderer;
+import com.badlogic.gdx.maps.tiled.TmxMapLoader;
 import com.badlogic.gdx.maps.tiled.renderers.OrthogonalTiledMapRenderer;
 import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.math.Vector2;
@@ -19,12 +23,13 @@ import com.badlogic.gdx.utils.Array;
 import com.badlogic.gdx.utils.ScreenUtils;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.g2d.freetype.FreeTypeFontGenerator;
+import java.util.ArrayList;
+
 
 import java.util.ArrayList;
 
 public class GameScreen extends ScreenAdapter {
 	SpriteBatch batch;
-	Texture img;
 	private OrthographicCamera camera;
 	private int score;
 	private float period = 1f;
@@ -41,6 +46,7 @@ public class GameScreen extends ScreenAdapter {
 	private World world;
 	private Box2DDebugRenderer b2dr;
 	private ArrayList<Rectangle> rects = new ArrayList<Rectangle>();
+	private ArrayList<Entity> allEntities;
 
 
 
@@ -72,10 +78,22 @@ public class GameScreen extends ScreenAdapter {
 		// camera.setToOrtho(false, 800, 480);
 
 
+
+		// load map
+		tiledMap = new TmxMapLoader().load("PirateMap.tmx");
+		tiledMapRenderer = new OrthogonalTiledMapRenderer(tiledMap);
+
+		//Initialise entities list
+		allEntities = new ArrayList<Entity>();
+
 		// initialise the player
 		float centerX = (camera.viewportWidth / 2);
 		float centerY = (camera.viewportHeight / 2);
 		player = new PlayerShip(centerX, centerY);
+		allEntities.add(player);
+	}
+
+
 
 
 		// load map
@@ -97,14 +115,15 @@ public class GameScreen extends ScreenAdapter {
 	}
 
 
+
 	@Override
 	public void render (float delta) {
-
-		ScreenUtils.clear(0f, 0.4f, 0.6f, 1);
+		ScreenUtils.clear(0.67f, 0.91f, 1f, 1);
 
 		camera.update();
 
 		game.batch.setProjectionMatrix(camera.combined);
+
 
 		// begin a new batch
 		game.batch.begin();
@@ -178,15 +197,30 @@ public class GameScreen extends ScreenAdapter {
 				player.movement.add(0, -1);
 			}
 
+
+		if(Gdx.input.isKeyJustPressed(Input.Keys.LEFT)){
+			Bullet newBullet = new Bullet(player.getX(), player.getY());
+			allEntities.add(newBullet);
+			newBullet.shootLeft();
+		}
+		else if(Gdx.input.isKeyJustPressed(Input.Keys.RIGHT)){
+			Bullet newBullet = new Bullet(player.getX(), player.getY());
+			allEntities.add(newBullet);
+			newBullet.shootRight();
+		}
+		else if(Gdx.input.isKeyJustPressed(Input.Keys.UP)){
+			Bullet newBullet = new Bullet(player.getX(), player.getY());
+			allEntities.add(newBullet);
+			newBullet.shootUp();
+		}
+		else if(Gdx.input.isKeyJustPressed(Input.Keys.DOWN)){
+			Bullet newBullet = new Bullet(player.getX(), player.getY());
+			allEntities.add(newBullet);
+			newBullet.shootDown();
 		}
 
-		// Update and Render Player Ship
-		player.update();
-		player.render(game.batch);
 
-		// Update and Render TileMap
-		tiledMapRenderer.setView(camera);
-		tiledMapRenderer.render();
+
 
 		// Update Camera Position
 		camera.position.set(player.getX(), player.getY(), 0);
@@ -197,6 +231,23 @@ public class GameScreen extends ScreenAdapter {
 			score += 1;
 		} else{
 			time += Gdx.graphics.getDeltaTime();
+		}
+
+
+		// begin a new batch
+		game.batch.begin();
+
+
+		// Update and Render TileMap
+		tiledMapRenderer.setView(camera);
+		tiledMapRenderer.render();
+
+
+
+		//Update and Render all Entities
+		for(Entity entity : allEntities){
+			entity.update();
+			entity.render(game.batch);
 		}
 
 		// Draw Score to Screen
@@ -213,6 +264,5 @@ public class GameScreen extends ScreenAdapter {
 	public void dispose () {
 		player.dispose();
 		batch.dispose();
-		img.dispose();
 	}
 }
