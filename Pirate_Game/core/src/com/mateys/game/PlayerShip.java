@@ -4,25 +4,33 @@ import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
+import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.math.Vector2;
+
 
 public class PlayerShip extends Entity{
     private int MOVE_SPEED = 500;
     public Vector2 movement;
+    private Rectangle playerRect;
+    TextureRegion textureRegion;
+    int rotation;
 
 
     public PlayerShip(float x, float y) {
         this.image = new Texture(Gdx.files.internal("PlayerShip.png"));
         this.textureRegion = new TextureRegion(image);
-        this.position = new Vector2(Gdx.graphics.getWidth()/2, Gdx.graphics.getHeight()/2);
+        // this.position = new Vector2(Gdx.graphics.getWidth()/2, Gdx.graphics.getHeight()/2);
+        this.position = new Vector2(2500, 2500);
         this.movement = new Vector2(0, 0);
+        this.playerRect = new Rectangle(this.position.x, this.position.y, 64, 64);
 
     }
 
     public void update() {
         // set ship position at 'position' + (normalised 'movement' * 'MOVE_SPEED') * DeltaTime
         this.position.mulAdd(this.movement.nor(), MOVE_SPEED * Gdx.graphics.getDeltaTime());
-        }
+        this.playerRect.setPosition(this.position);
+    }
 
 
 
@@ -43,6 +51,11 @@ public class PlayerShip extends Entity{
         this.movement.add(1, 0);
         this.rotation = 90;
     }
+
+
+    public Rectangle getPlayerRect() { return playerRect; }
+
+
     public void moveUp(){
         this.movement.add(0, 1);
         this.rotation = 180;
@@ -51,7 +64,6 @@ public class PlayerShip extends Entity{
         this.movement.add(0, -1);
         this.rotation = 0;
     }
-
 
 
     public void dispose() {this.image.dispose();}
