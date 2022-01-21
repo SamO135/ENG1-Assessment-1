@@ -9,7 +9,7 @@ import com.badlogic.gdx.math.Vector2;
 
 
 public class PlayerShip extends Entity{
-    private int MOVE_SPEED = 500;
+    public static final int MOVE_SPEED = 500;
     public Vector2 movement;
     private Rectangle playerRect;
     TextureRegion textureRegion;
@@ -22,7 +22,7 @@ public class PlayerShip extends Entity{
         // this.position = new Vector2(Gdx.graphics.getWidth()/2, Gdx.graphics.getHeight()/2);
         this.position = new Vector2(2500, 2500);
         this.movement = new Vector2(0, 0);
-        this.playerRect = new Rectangle(this.position.x, this.position.y, 64, 64);
+        this.playerRect = new Rectangle(this.position.x, this.position.y, this.image.getWidth(), this.image.getHeight());
 
     }
 
