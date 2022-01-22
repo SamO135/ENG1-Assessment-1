@@ -5,12 +5,12 @@ import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
+import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.math.Vector2;
 
 public class Bullet extends Entity{
     private Vector2 velocity;
     public static final int MOVE_SPEED = 1000;
-    private float size;
     private int damage;
 
     public Bullet(float x, float y){
@@ -20,14 +20,18 @@ public class Bullet extends Entity{
         this.velocity = new Vector2(0, 0);
     }
 
+    //updates the bullets position each frame by its velocity
     public void update(){
         this.position.add(velocity);
     }
 
-
+    //returns the damage of the bullet
     public int getDamage(){return this.damage;}
-    public float getSize(){return this.size;}
 
+    //returns the rect/hitbox of the bullet
+    public Rectangle getRect(){return this.rect;}
+
+    //sets the velocity of the bullet
     public void setVelocity(float x, float y){this.velocity = new Vector2(x, y);}
 
     public void shootLeft(){
