@@ -5,6 +5,7 @@ import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.math.Vector2;
+import com.badlogic.gdx.utils.Null;
 
 public class Entity {
     protected Texture image;
@@ -17,15 +18,20 @@ public class Entity {
     protected Entity(){
     }
 
-    protected void render(SpriteBatch batch){
+    /**
+     * Draws the entity image at its x and y position
+     * @param batch a SpriteBatch instance
+     */
+    protected void render(@Null SpriteBatch batch){
         batch.draw(image, position.x, position.y);
     }
 
     protected void update(){}
 
-    //returns x position of entity
+
+    /** @return the x position of the entity*/
     public float getX(){return this.position.x;}
-    //returns y position of entity
+    /** @return the y position of the entity*/
     public float getY(){return this.position.y;}
 
 }

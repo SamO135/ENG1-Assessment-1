@@ -5,7 +5,6 @@ import com.badlogic.gdx.ScreenAdapter;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
-import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.maps.MapObject;
 import com.badlogic.gdx.maps.objects.RectangleMapObject;
 import com.badlogic.gdx.maps.tiled.TiledMap;
@@ -21,12 +20,15 @@ import com.badlogic.gdx.graphics.g2d.freetype.FreeTypeFontGenerator;
 import java.util.ArrayList;
 
 public class GameScreen extends ScreenAdapter {
-	SpriteBatch batch;
 	private OrthographicCamera camera;
 	private int score;
+	/** The rate of passive score increase in seconds */
 	private float period = 1f;
-	private float time = 0f;
+	/** The variable used to check if there has been a long enough delay since the last passive score increment */
+	private float timeElapsed = 0f;
+	/** The font, size, colour etc. for the text displaying the score */
 	private BitmapFont scoreText;
+	/** The font, size, colour etc. for the text displaying the gold */
 	private BitmapFont goldText;
 	private int gold;
 	private Mateys game;
@@ -35,8 +37,10 @@ public class GameScreen extends ScreenAdapter {
 	TiledMapRenderer tiledMapRenderer;
 	private World world;
 	private Box2DDebugRenderer b2dr;
+	/** A list of all the hitboxes of the islands and map boundary */
 	private ArrayList<Rectangle> rects = new ArrayList<Rectangle>();
-	private ArrayList<Entity> allEntities;
+	/** A list of all entities present in the game */
+	private ArrayList<Entity> allEntities = new ArrayList<Entity>();
 
 
 
@@ -46,6 +50,7 @@ public class GameScreen extends ScreenAdapter {
 		this.game = game;
 	}
 
+	/** A method to initialise variable and objects */
 	@Override
 	public void show() {
 
@@ -72,10 +77,6 @@ public class GameScreen extends ScreenAdapter {
 		}
 
 
-		// initialise entities list
-		allEntities = new ArrayList<Entity>();
-
-
 		// initialise the player
 		player = new PlayerShip(2500, 2500);
 		allEntities.add(player);
@@ -83,7 +84,10 @@ public class GameScreen extends ScreenAdapter {
 
 
 
-
+	/**
+	 * The main method where the game logic is written
+	 * @param delta The time in seconds since the last render
+	 */
 	@Override
 	public void render (float delta) {
 		ScreenUtils.clear(0.67f, 0.91f, 1f, 1);
@@ -134,11 +138,11 @@ public class GameScreen extends ScreenAdapter {
 		camera.position.set(player.getX(), player.getY(), 0);
 
 		// update timer - used for adding score over time
-		if (time > period) {
-			time = 0f;
+		if (timeElapsed > period) {
+			timeElapsed = 0f;
 			score += 1;
 		} else {
-			time += Gdx.graphics.getDeltaTime();
+			timeElapsed += delta;
 		}
 
 
@@ -160,7 +164,7 @@ public class GameScreen extends ScreenAdapter {
 		//This has to be checked after the player has been updated
 		for (Rectangle rect : rects) {
 			if (player.getRect().overlaps(rect)) {
-				player.position.mulAdd(player.movement.nor(), -(PlayerShip.MOVE_SPEED) * Gdx.graphics.getDeltaTime()); //If the player rect/hitbox has overlapped a boundary, move back the same distance that it moved forward i.e. move back to where it was before it overlapped.
+				player.position.mulAdd(player.movement.nor(), -(PlayerShip.MOVE_SPEED) * delta); //If the player rect/hitbox has overlapped a boundary, move back the same distance that it moved forward i.e. move back to where it was before it overlapped.
 			}
 		}
 

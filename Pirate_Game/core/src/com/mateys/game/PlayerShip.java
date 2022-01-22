@@ -15,14 +15,18 @@ public class PlayerShip extends Ship{
         super(x, y);
     }
 
+    /** Updates the position and rect of the player ship */
     public void update() {
         // set ship position at: 'position' + (normalised 'movement' * 'MOVE_SPEED') * DeltaTime
         this.position.mulAdd(this.movement.nor(), MOVE_SPEED * Gdx.graphics.getDeltaTime()); //calculates and sets new player position
         this.rect.setPosition(this.position); //updates the player rect/hitbox
     }
 
+    /** Renders the player ship at its position and rotation
+     * @param batch a SpriteBatch instance
+     */
     public void render(SpriteBatch batch) {
-        //It is ugly but allows you to specify the rotation of the image.
+        //This is long and ugly but allows you to specify the rotation of the image.
         //parameters are: TextureRegion, x position on screen, y position on screen, x position within TextureRegion, y position within TextureRegion, image width, image height, image x scale, image y scale, image rotation
         batch.draw(textureRegion, this.position.x - this.image.getWidth()/2, this.position.y - this.image.getHeight()/2, this.textureRegion.getRegionWidth()/2, this.textureRegion.getRegionHeight()/2, this.image.getWidth(), this.image.getHeight(), 1, 1, this.rotation);
     }
