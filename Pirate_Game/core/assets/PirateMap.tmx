@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<map version="1.5" tiledversion="1.7.2" orientation="orthogonal" renderorder="right-down" width="150" height="150" tilewidth="64" tileheight="64" infinite="0" nextlayerid="10" nextobjectid="40">
+<map version="1.5" tiledversion="1.7.2" orientation="orthogonal" renderorder="right-down" width="150" height="150" tilewidth="64" tileheight="64" infinite="0" nextlayerid="14" nextobjectid="95">
  <tileset firstgid="1" source="PirateTileSheet.tsx"/>
  <layer id="1" name="Water" width="150" height="150">
   <data encoding="csv">
@@ -467,10 +467,6 @@
 </data>
  </layer>
  <objectgroup id="7" name="LandObject">
-  <object id="7" x="3392" y="3840" width="256" height="576"/>
-  <object id="8" x="3648" y="4480" width="512" height="128"/>
-  <object id="9" x="4160" y="4096" width="448" height="448"/>
-  <object id="11" x="3648" y="3712" width="512" height="768"/>
   <object id="12" x="4160" y="3776" width="384" height="320"/>
   <object id="13" x="4160" y="3712" width="320" height="64"/>
   <object id="14" x="3776" y="3648" width="576" height="64"/>
@@ -479,8 +475,6 @@
   <object id="18" x="1664" y="7424" width="6272" height="448"/>
   <object id="19" x="7360" y="1664" width="576" height="6208"/>
   <object id="20" x="1664" y="1664" width="5760" height="512"/>
-  <object id="21" x="5760" y="6272" width="256" height="512"/>
-  <object id="22" x="6016" y="6720" width="448" height="128"/>
   <object id="23" x="6400" y="6464" width="128" height="256"/>
   <object id="24" x="5824" y="6208" width="256" height="64"/>
   <object id="25" x="5888" y="6144" width="192" height="64"/>
@@ -497,6 +491,44 @@
   <object id="37" x="6912" y="2688" width="64" height="256"/>
   <object id="38" x="6848" y="2624" width="64" height="128"/>
   <object id="39" x="6336" y="2624" width="512" height="64"/>
+  <object id="83" x="5824" y="6272" width="128" height="448"/>
+  <object id="84" x="6080" y="6720" width="384" height="64"/>
+  <object id="85" x="5952" y="6656" width="128" height="64"/>
+  <object id="86" x="3456" y="3840" width="128" height="512"/>
+  <object id="87" x="3584" y="4288" width="64" height="64"/>
+  <object id="88" x="3712" y="4480" width="448" height="64"/>
+  <object id="89" x="4160" y="4096" width="448" height="384"/>
+  <object id="90" x="3648" y="4288" width="128" height="64"/>
+  <object id="91" x="3712" y="4352" width="64" height="128"/>
+  <object id="92" x="3584" y="3840" width="128" height="64"/>
+  <object id="93" x="3648" y="3712" width="64" height="128"/>
+  <object id="94" x="3712" y="3712" width="64" height="64"/>
+ </objectgroup>
+ <objectgroup id="11" name="LangwithCollege">
+  <object id="52" x="6272" y="6400" width="64" height="256"/>
+  <object id="53" x="6336" y="6272" width="64" height="192"/>
+  <object id="54" x="5952" y="6272" width="384" height="64"/>
+  <object id="80" x="6016" y="6336" width="64" height="256"/>
+  <object id="81" x="6080" y="6528" width="128" height="64"/>
+  <object id="82" x="6144" y="6592" width="128" height="64"/>
+ </objectgroup>
+ <objectgroup id="13" name="JamesCollege">
+  <object id="68" x="3840" y="4352" width="192" height="64"/>
+  <object id="69" x="3968" y="4032" width="64" height="320"/>
+  <object id="70" x="4032" y="4032" width="256" height="64"/>
+  <object id="71" x="3584" y="3968" width="704" height="64"/>
+  <object id="72" x="3584" y="4032" width="64" height="256"/>
+  <object id="73" x="3648" y="4224" width="256" height="64"/>
+  <object id="74" x="3840" y="4288" width="64" height="64"/>
+  <object id="75" x="4032" y="4096" width="64" height="320"/>
+  <object id="76" x="4288" y="3904" width="64" height="192"/>
+  <object id="77" x="3584" y="3904" width="704" height="64"/>
+ </objectgroup>
+ <objectgroup id="12" name="VanbrughCollege">
+  <object id="58" x="6784" y="2816" width="64" height="384"/>
+  <object id="59" x="6464" y="2816" width="320" height="64"/>
+  <object id="78" x="6464" y="2880" width="64" height="320"/>
+  <object id="79" x="6528" y="3136" width="256" height="64"/>
  </objectgroup>
  <layer id="3" name="Castle" width="150" height="150">
   <data encoding="csv">
