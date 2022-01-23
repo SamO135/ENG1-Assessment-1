@@ -4,14 +4,10 @@ import com.badlogic.gdx.Input;
 import com.badlogic.gdx.ScreenAdapter;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.OrthographicCamera;
-import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
-import com.badlogic.gdx.maps.MapLayer;
 import com.badlogic.gdx.maps.MapObject;
 import com.badlogic.gdx.maps.objects.RectangleMapObject;
-import com.badlogic.gdx.maps.tiled.*;
-import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.maps.tiled.TiledMap;
 import com.badlogic.gdx.maps.tiled.TiledMapRenderer;
 import com.badlogic.gdx.maps.tiled.TmxMapLoader;
@@ -19,14 +15,12 @@ import com.badlogic.gdx.maps.tiled.renderers.OrthogonalTiledMapRenderer;
 import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.physics.box2d.*;
-import com.badlogic.gdx.utils.Array;
 import com.badlogic.gdx.utils.ScreenUtils;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.g2d.freetype.FreeTypeFontGenerator;
 import java.util.ArrayList;
+import java.util.Iterator;
 
-
-import java.util.ArrayList;
 
 public class GameScreen extends ScreenAdapter {
 	SpriteBatch batch;
@@ -47,7 +41,8 @@ public class GameScreen extends ScreenAdapter {
 	private Box2DDebugRenderer b2dr;
 	private ArrayList<Rectangle> rects = new ArrayList<Rectangle>();
 	private ArrayList<Entity> allEntities;
-
+	private ArrayList<Bullet> allBullets;
+	private ArrayList<Island> allIslands = new ArrayList<Island>();
 
 
 
@@ -86,17 +81,26 @@ public class GameScreen extends ScreenAdapter {
 		world = new World(new Vector2(0, 0), true);
 		b2dr = new Box2DDebugRenderer();
 
-		for (MapObject object: tiledMap.getLayers().get(3).getObjects().getByType(RectangleMapObject.class)) {
+		for (MapObject object: tiledMap.getLayers().get("LandObject").getObjects().getByType(RectangleMapObject.class)) {
 			Rectangle rect = ((RectangleMapObject) object).getRectangle();
 			rects.add(rect);
 
 		}
 
 
-		//Initialise entities list
+		//initialize entities list
 		allEntities = new ArrayList<Entity>();
 
-		// initialise the player
+		//initalize bullets list
+		allBullets = new ArrayList<Bullet>();
+
+		//Initialize Islands
+		allIslands.add(new Island("JamesCollege", tiledMap, 1000));
+		allIslands.add(new Island("LangwithCollege", tiledMap, 500));
+		allIslands.add(new Island("VanbrughCollege", tiledMap, 500));
+
+
+		// initialize the player
 		float centerX = (camera.viewportWidth / 2);
 		float centerY = (camera.viewportHeight / 2);
 		player = new PlayerShip(centerX, centerY);
@@ -193,19 +197,51 @@ public class GameScreen extends ScreenAdapter {
 		if (Gdx.input.isKeyJustPressed(Input.Keys.LEFT)) {
 			Bullet newBullet = new Bullet(player.getX(), player.getY());
 			allEntities.add(newBullet);
+			allBullets.add(newBullet);
 			newBullet.shootLeft();
 		} else if (Gdx.input.isKeyJustPressed(Input.Keys.RIGHT)) {
 			Bullet newBullet = new Bullet(player.getX(), player.getY());
 			allEntities.add(newBullet);
+			allBullets.add(newBullet);
 			newBullet.shootRight();
 		} else if (Gdx.input.isKeyJustPressed(Input.Keys.UP)) {
 			Bullet newBullet = new Bullet(player.getX(), player.getY());
 			allEntities.add(newBullet);
+			allBullets.add(newBullet);
 			newBullet.shootUp();
 		} else if (Gdx.input.isKeyJustPressed(Input.Keys.DOWN)) {
 			Bullet newBullet = new Bullet(player.getX(), player.getY());
 			allEntities.add(newBullet);
+			allBullets.add(newBullet);
 			newBullet.shootDown();
+		}
+
+		// Check for bullet collision
+		for (Island island : allIslands) {
+			for (Rectangle rect : island.getHitboxes()) {
+				Iterator<Bullet> i = allBullets.iterator();
+				while (i.hasNext()) {
+					Bullet bullet = i.next();
+					if (bullet.getBulletRect().overlaps(rect)) {
+						island.takeDamage();
+
+						if (island.getState() == 1) {
+							gold += 50;
+							score += 100;
+						}
+						bullet.dispose();
+						i.remove();
+						allBullets.remove(bullet);
+					}
+
+
+					if (bullet.isDead()) {
+						bullet.dispose();
+						i.remove();
+						allBullets.remove(bullet);
+					}
+				}
+			}
 		}
 
 
