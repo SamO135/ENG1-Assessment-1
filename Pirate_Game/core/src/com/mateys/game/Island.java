@@ -10,8 +10,8 @@ import java.util.ArrayList;
 public class Island {
 
     private int health;
-    private ArrayList<Rectangle> hitboxes = new ArrayList<Rectangle>();
-    private String name;
+    private final ArrayList<Rectangle> hitBoxes = new ArrayList<Rectangle>();
+    private final String name;
     private int state = 0;
     TiledMap tiledMap;
 
@@ -23,7 +23,7 @@ public class Island {
 
         for (MapObject object: this.tiledMap.getLayers().get(name).getObjects().getByType(RectangleMapObject.class)) {
             Rectangle rect = ((RectangleMapObject) object).getRectangle();
-            hitboxes.add(rect);
+            hitBoxes.add(rect);
         }
 
     }
@@ -53,7 +53,7 @@ public class Island {
         return this.health;
     }
 
-    public ArrayList<Rectangle> getHitboxes() {
-        return hitboxes;
+    public ArrayList<Rectangle> getHitBoxes() {
+        return hitBoxes;
     }
 }

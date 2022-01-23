@@ -5,7 +5,6 @@ import com.badlogic.gdx.ScreenAdapter;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
-import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.maps.MapObject;
 import com.badlogic.gdx.maps.objects.RectangleMapObject;
 import com.badlogic.gdx.maps.tiled.TiledMap;
@@ -101,7 +100,7 @@ public class GameScreen extends ScreenAdapter {
 		// initialize the player
 		float centerX = (camera.viewportWidth / 2);
 		float centerY = (camera.viewportHeight / 2);
-		player = new PlayerShip(centerX, centerY);
+		player = new PlayerShip(2500, 2500);
 
 		allEntities.add(player);
 	}
@@ -163,7 +162,7 @@ public class GameScreen extends ScreenAdapter {
 
 		// Check for bullet collision
 		for (Island island : allIslands) {
-			for (Rectangle rect : island.getHitboxes()) {
+			for (Rectangle rect : island.getHitBoxes()) {
 				Iterator<Bullet> i = allBullets.iterator();
 				while (i.hasNext()) {
 					Bullet bullet = i.next();

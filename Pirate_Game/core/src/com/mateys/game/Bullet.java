@@ -44,7 +44,6 @@ public class Bullet extends Entity{
     /** @return the damage of the bullet */
     public int getDamage(){return this.damage;}
 
-    public float getSize(){return this.size;}
     public Rectangle getBulletRect() {
         return bulletRect;
     }
