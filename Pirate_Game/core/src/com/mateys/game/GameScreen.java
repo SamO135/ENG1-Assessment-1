@@ -23,26 +23,33 @@ import java.util.Iterator;
 
 
 public class GameScreen extends ScreenAdapter {
-	SpriteBatch batch;
 	private OrthographicCamera camera;
 	private int score;
+	/** The rate of passive score increase in seconds */
 	private float period = 1f;
-	private float time = 0f;
+	/** The variable used to check if there has been a long enough delay since the last passive score increment */
+	private float timeElapsed = 0f;
+	/** The font, size, colour etc. for the text displaying the score */
 	private BitmapFont scoreText;
+	/** The font, size, colour etc. for the text displaying the gold */
 	private BitmapFont goldText;
 	private int gold;
-	private FreeTypeFontGenerator fontGenerator;
-	private FreeTypeFontGenerator.FreeTypeFontParameter  fontParameter;
 	private Mateys game;
 	private PlayerShip player;
 	TiledMap tiledMap;
 	TiledMapRenderer tiledMapRenderer;
 	private World world;
 	private Box2DDebugRenderer b2dr;
+	/** A list of all the hitboxes of the islands and map boundary */
 	private ArrayList<Rectangle> rects = new ArrayList<Rectangle>();
-	private ArrayList<Entity> allEntities;
+
 	private ArrayList<Bullet> allBullets;
 	private ArrayList<Island> allIslands = new ArrayList<Island>();
+
+	/** A list of all entities present in the game */
+	private ArrayList<Entity> allEntities = new ArrayList<Entity>();
+
+
 
 
 
@@ -51,42 +58,33 @@ public class GameScreen extends ScreenAdapter {
 		this.game = game;
 	}
 
+	/** A method to initialise variable and objects */
 	@Override
 	public void show() {
 
 		this.world = world;
 
-		//create the score text font
-		fontGenerator = new FreeTypeFontGenerator(Gdx.files.internal("BlackSamsGold.ttf"));
-		fontParameter = new FreeTypeFontGenerator.FreeTypeFontParameter();
-		fontParameter.size = 100;
-		fontParameter.borderWidth = 2f;
-		fontParameter.borderColor = Color.BLACK;
-		fontParameter.color = Color.WHITE;
-		scoreText = fontGenerator.generateFont(fontParameter);
-		fontParameter.color = Color.GOLD;
-		goldText = fontGenerator.generateFont(fontParameter);
+		// create fonts
+		scoreText = createTextFont("BlackSamsGold.ttf", 100, Color.WHITE, 2f, Color.BLACK);
+		goldText = createTextFont("BlackSamsGold.ttf", 100, Color.GOLD, 2f, Color.BLACK);
 
 
+		// initialise camera
 		camera = new OrthographicCamera();
-		camera.setToOrtho(false, 1500, 1000);
-		// camera.setToOrtho(false, 800, 480);
-
+		camera.setToOrtho(false, 1500, 1000); //set camera's view distance
 
 
 		// load map
 		tiledMap = new TmxMapLoader().load("PirateMap.tmx");
 		tiledMapRenderer = new OrthogonalTiledMapRenderer(tiledMap);
-
 		world = new World(new Vector2(0, 0), true);
 		b2dr = new Box2DDebugRenderer();
+
 
 		for (MapObject object: tiledMap.getLayers().get("LandObject").getObjects().getByType(RectangleMapObject.class)) {
 			Rectangle rect = ((RectangleMapObject) object).getRectangle();
 			rects.add(rect);
-
 		}
-
 
 		//initialize entities list
 		allEntities = new ArrayList<Entity>();
@@ -104,96 +102,43 @@ public class GameScreen extends ScreenAdapter {
 		float centerX = (camera.viewportWidth / 2);
 		float centerY = (camera.viewportHeight / 2);
 		player = new PlayerShip(centerX, centerY);
+
 		allEntities.add(player);
 	}
 
 
 
-
-
+	/**
+	 * The main method where the game logic is written
+	 * @param delta The time in seconds since the last render
+	 */
 	@Override
 	public void render (float delta) {
 		ScreenUtils.clear(0.67f, 0.91f, 1f, 1);
-
 		camera.update();
-
 		game.batch.setProjectionMatrix(camera.combined);
 
 
-		// begin a new batch
-		game.batch.begin();
-
-
-		// process user input
+		// process user input -- movement
 		player.movement.set(0, 0);
-
-		Boolean canMove = true;
-
 		if (Gdx.input.isKeyPressed(Input.Keys.A)) {
 			player.rotation = 270;
-
-			float newXPos = player.getX() - 32;
-			Rectangle testRect = new Rectangle(newXPos, player.getY(), 64, 64);
-
-			for (Rectangle rect : rects) {
-				if (testRect.overlaps(rect)) {
-					canMove = false;
-				}
-			}
-			if (canMove) {
-				player.movement.add(-1, 0);
-			}
-
+			player.moveLeft();
 		}
 		if (Gdx.input.isKeyPressed(Input.Keys.D)) {
 			player.rotation = 90;
-
-			float newXPos = player.getX() + 16;
-			Rectangle testRect = new Rectangle(newXPos, player.getY(), 64, 64);
-
-			for (Rectangle rect : rects) {
-				if (testRect.overlaps(rect)) {
-					canMove = false;
-				}
-			}
-			if (canMove) {
-				player.movement.add(1, 0);
-			}
-
+			player.moveRight();
 		}
 		if (Gdx.input.isKeyPressed(Input.Keys.W)) {
 			player.rotation = 180;
-
-			float newYPos = player.getY() + 32;
-			Rectangle testRect = new Rectangle(player.getX(), newYPos, 64, 64);
-
-			for (Rectangle rect : rects) {
-				if (testRect.overlaps(rect)) {
-					canMove = false;
-				}
-			}
-			if (canMove) {
-				player.movement.add(0, 1);
-			}
-
+			player.moveUp();
 		}
 		if (Gdx.input.isKeyPressed(Input.Keys.S)) {
 			player.rotation = 0;
-
-			float newYPos = player.getY() - 32;
-			Rectangle testRect = new Rectangle(player.getX(), newYPos, 64, 64);
-
-			for (Rectangle rect : rects) {
-				if (testRect.overlaps(rect)) {
-					canMove = false;
-				}
-			}
-			if (canMove) {
-				player.movement.add(0, -1);
-			}
+			player.moveDown();
 		}
 
-
+		// process user input -- shooting
 		if (Gdx.input.isKeyJustPressed(Input.Keys.LEFT)) {
 			Bullet newBullet = new Bullet(player.getX(), player.getY());
 			allEntities.add(newBullet);
@@ -245,30 +190,41 @@ public class GameScreen extends ScreenAdapter {
 		}
 
 
-		// Update Camera Position
+		// update camera position
 		camera.position.set(player.getX(), player.getY(), 0);
 
-		// Update Timer
-		if (time > period) {
-			time = 0f;
+		// update timer - used for adding score over time
+		if (timeElapsed > period) {
+			timeElapsed = 0f;
 			score += 1;
 		} else {
-			time += Gdx.graphics.getDeltaTime();
+			timeElapsed += delta;
 		}
 
 
-		// Update and Render TileMap
+		// update and render tileMap
 		tiledMapRenderer.setView(camera);
 		tiledMapRenderer.render();
 
 
-		//Update and Render all Entities
+		// begin a new batch
+		game.batch.begin();
+
+		// update and render all entities
 		for (Entity entity : allEntities) {
 			entity.update();
 			entity.render(game.batch);
 		}
 
-		// Draw Score to Screen
+		//Check if the player has collided with an island or map boundary
+		//This has to be checked after the player has been updated
+		for (Rectangle rect : rects) {
+			if (player.getRect().overlaps(rect)) {
+				player.position.mulAdd(player.movement.nor(), -(PlayerShip.MOVE_SPEED) * delta); //If the player rect/hitbox has overlapped a boundary, move back the same distance that it moved forward i.e. move back to where it was before it overlapped.
+			}
+		}
+
+		//Write text to Screen
 		scoreText.draw(game.batch, "Score: " + score, camera.position.x - 700, camera.position.y + 450);
 		goldText.draw(game.batch, "Gold " + gold, camera.position.x - 250, camera.position.y + 450);
 
@@ -278,10 +234,28 @@ public class GameScreen extends ScreenAdapter {
 		game.batch.end();
 	}
 
+
+	/** Creates a font based on the parameters provided and returns it, you can then use the .draw method to display text with this font.
+	 * @param fontPath The path to a .ttf file
+	 * @param fontSize The size of the font
+	 * @param fontColour The colour of the font
+	 * @param borderWidth The width of the border around the text
+	 * @param borderColour The colour of the border
+	 */
+	public BitmapFont createTextFont(String fontPath, int fontSize, Color fontColour, float borderWidth, Color borderColour){
+		FreeTypeFontGenerator fontGenerator = new FreeTypeFontGenerator(Gdx.files.internal(fontPath));
+		FreeTypeFontGenerator.FreeTypeFontParameter fontParameter = new FreeTypeFontGenerator.FreeTypeFontParameter();
+		fontParameter.size = fontSize;
+		fontParameter.color = fontColour;
+		fontParameter.borderWidth = borderWidth;
+		fontParameter.borderColor = borderColour;
+		BitmapFont bitmapFont = fontGenerator.generateFont(fontParameter);
+		return bitmapFont;
+	}
+
 	@Override
 	public void dispose() {
 		player.dispose();
 		tiledMap.dispose();
 	}
-
 }
