@@ -32,6 +32,7 @@ public class GameScreen extends ScreenAdapter {
 	private BitmapFont scoreText;
 	/** The font, size, colour etc. for the text displaying the gold */
 	private BitmapFont goldText;
+	private BitmapFont islandText;
 	private int gold;
 	private Mateys game;
 	private PlayerShip player;
@@ -64,13 +65,15 @@ public class GameScreen extends ScreenAdapter {
 		this.world = world;
 
 		// create fonts
-		scoreText = createTextFont("BlackSamsGold.ttf", 100, Color.WHITE, 2f, Color.BLACK);
-		goldText = createTextFont("BlackSamsGold.ttf", 100, Color.GOLD, 2f, Color.BLACK);
+		scoreText = createTextFont("fonts/BlackSamsGold.ttf", 100, Color.WHITE, 2f, Color.BLACK);
+		goldText = createTextFont("fonts/BlackSamsGold.ttf", 100, Color.GOLD, 2f, Color.BLACK);
+		islandText = createTextFont("fonts/CELTICHD.ttf", 60, Color.WHITE, 1f, Color.BLACK);
 
 
 		// initialise camera
 		camera = new OrthographicCamera();
 		camera.setToOrtho(false, 1500, 1000); //set camera's view distance
+		camera.zoom = 1.3f;
 
 
 		// load map
@@ -92,14 +95,12 @@ public class GameScreen extends ScreenAdapter {
 		allBullets = new ArrayList<Bullet>();
 
 		//Initialize Islands
-		allIslands.add(new Island("JamesCollege", tiledMap, 1000));
-		allIslands.add(new Island("LangwithCollege", tiledMap, 500));
-		allIslands.add(new Island("VanbrughCollege", tiledMap, 500));
+		allIslands.add(new Island("JamesCollege", tiledMap, 1000)); //Island is roughly at position (3800, 5500)
+		allIslands.add(new Island("LangwithCollege", tiledMap, 500)); //Island is roughly at position (6000, 3200)
+		allIslands.add(new Island("VanbrughCollege", tiledMap, 500)); //Island is roughly at position (6400, 6600)
 
 
 		// initialize the player
-		float centerX = (camera.viewportWidth / 2);
-		float centerY = (camera.viewportHeight / 2);
 		player = new PlayerShip(2500, 2500);
 
 		allEntities.add(player);
@@ -121,7 +122,7 @@ public class GameScreen extends ScreenAdapter {
 		// process user input -- movement
 		player.movement.set(0, 0);
 		if (Gdx.input.isKeyPressed(Input.Keys.A)) {
-			player.rotation = 270;
+			player.rotation = 270;	// rotation is used to orient the ship depending on the direction of travel i.e. face left if moving left
 			player.moveLeft();
 		}
 		if (Gdx.input.isKeyPressed(Input.Keys.D)) {
@@ -161,13 +162,13 @@ public class GameScreen extends ScreenAdapter {
 		}
 
 		// Check for bullet collision
-		for (Island island : allIslands) {
-			for (Rectangle rect : island.getHitBoxes()) {
+		for (Island island : allIslands) { // iterate through islands
+			for (Rectangle rect : island.getHitBoxes()) { // iterate through each island's hitboxes
 				Iterator<Bullet> i = allBullets.iterator();
-				while (i.hasNext()) {
+				while (i.hasNext()) {	// iterate through all bullets in game.
 					Bullet bullet = i.next();
 					if (bullet.getBulletRect().overlaps(rect)) {
-						island.takeDamage();
+						island.takeDamage(bullet.getDamage());	// if bullet collides with island, damage the island
 
 						if (island.getState() == 1) {
 							gold += 50;
@@ -176,13 +177,14 @@ public class GameScreen extends ScreenAdapter {
 						bullet.dispose();
 						i.remove();
 						allBullets.remove(bullet);
+						allEntities.remove(bullet);	// remove bullet from game
 					}
 
-
-					if (bullet.isDead()) {
+					if (bullet.isDead()) { // if bullet has existed for too long i.e. it's been shot but hasn't collided with anything for x amount of seconds
 						bullet.dispose();
 						i.remove();
 						allBullets.remove(bullet);
+						allEntities.remove(bullet); // remove bullet from game
 					}
 				}
 			}
@@ -224,8 +226,11 @@ public class GameScreen extends ScreenAdapter {
 		}
 
 		//Write text to Screen
-		scoreText.draw(game.batch, "Score: " + score, camera.position.x - 700, camera.position.y + 450);
-		goldText.draw(game.batch, "Gold " + gold, camera.position.x - 250, camera.position.y + 450);
+		scoreText.draw(game.batch, "Score: " + score, camera.position.x - 950, camera.position.y + 610);
+		goldText.draw(game.batch, "Gold " + gold, camera.position.x - 125, camera.position.y + 610);
+		islandText.draw(game.batch, allIslands.get(0).getName() + "\n     " + allIslands.get(0).getHealth(), 3620, 5550); // James College
+		islandText.draw(game.batch, allIslands.get(1).getName() + "\n      " + allIslands.get(1).getHealth(), 5950, 3250); // Langwith College
+		islandText.draw(game.batch, allIslands.get(2).getName() + "\n      " + allIslands.get(2).getHealth(), 6400, 6650); // Vanbruh College
 
 		b2dr.render(world, camera.combined);
 

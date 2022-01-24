@@ -22,7 +22,7 @@ public class Entity {
      * Draws the entity image at its x and y position
      * @param batch a SpriteBatch instance
      */
-    protected void render(@Null SpriteBatch batch){
+    protected void render(SpriteBatch batch){
         batch.draw(image, position.x, position.y);
     }
 

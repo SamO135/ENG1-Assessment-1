@@ -27,9 +27,10 @@ public class Bullet extends Entity{
         this.position = new Vector2(x, y);
         this.velocity = new Vector2(0, 0);
         this.bulletRect = new Rectangle(this.position.x, this.position.y, 64, 64);
+        this.damage = 50;
     }
 
-    /** updates the bullet's position each frame by its velocity */
+    /** updates the bullet's position each frame by its velocity. Also checks if the bullet has existed for too long */
     public void update(){
         this.position.add(velocity);
         this.bulletRect.setPosition(this.position);
@@ -44,11 +45,11 @@ public class Bullet extends Entity{
     /** @return the damage of the bullet */
     public int getDamage(){return this.damage;}
 
-    public Rectangle getBulletRect() {
-        return bulletRect;
-    }
-    public boolean isDead() { return dead; }
+    /** @return bullet rect */
+    public Rectangle getBulletRect() {return bulletRect;}
 
+    /** @return boolean value whether the bullet has existed for too long */
+    public boolean isDead() { return dead; }
 
     /** @return the rect/hitbox of the bullet */
     public Rectangle getRect(){return this.rect;}
@@ -79,9 +80,6 @@ public class Bullet extends Entity{
 
     public void dispose() {
         this.image.dispose();
-
-        // TODO find a better way remove bullet from screen
-        this.position = new Vector2(10000, 10000);
     }
 
 }
