@@ -19,7 +19,8 @@ public class PlayerShip extends Ship{
     public void update() {
         // set ship position at: 'position' + (normalised 'movement' * 'MOVE_SPEED') * DeltaTime
         this.position.mulAdd(this.movement.nor(), MOVE_SPEED * Gdx.graphics.getDeltaTime()); //calculates and sets new player position
-        this.rect.setPosition(this.position); //updates the player rect/hitbox
+        super.update();
+        //this.rect.setPosition(this.position); //updates the player rect/hitbox
     }
 
     /** Renders the player ship at its position and rotation

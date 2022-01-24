@@ -10,7 +10,7 @@ public class Bullet extends Entity{
     private Vector2 velocity;
     public static final int MOVE_SPEED = 1000;
     private int damage;
-    private Rectangle bulletRect;
+    //private Rectangle bulletRect;
     public boolean dead = false;
     public float timeAlive = 0f;
     private float period = 1f;
@@ -22,18 +22,20 @@ public class Bullet extends Entity{
      * @param y the y position of the bullet
      */
     public Bullet(float x, float y){
+        super(x, y);
         this.image = new Texture(Gdx.files.internal("cannonBall.png"));
         this.textureRegion = new TextureRegion(image);
-        this.position = new Vector2(x, y);
+        //this.position = new Vector2(x, y);
         this.velocity = new Vector2(0, 0);
-        this.bulletRect = new Rectangle(this.position.x, this.position.y, 64, 64);
+        //this.bulletRect = new Rectangle(this.position.x, this.position.y, 64, 64);
         this.damage = 50;
     }
 
     /** updates the bullet's position each frame by its velocity. Also checks if the bullet has existed for too long */
     public void update(){
         this.position.add(velocity);
-        this.bulletRect.setPosition(this.position);
+        super.update();
+        //this.bulletRect.setPosition(this.position);
 
         if (timeAlive > period) {
             dead = true;
@@ -46,7 +48,7 @@ public class Bullet extends Entity{
     public int getDamage(){return this.damage;}
 
     /** @return bullet rect */
-    public Rectangle getBulletRect() {return bulletRect;}
+    //public Rectangle getBulletRect() {return bulletRect;}
 
     /** @return boolean value whether the bullet has existed for too long */
     public boolean isDead() { return dead; }

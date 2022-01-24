@@ -13,11 +13,12 @@ public class Ship extends Entity{
 
 
     public Ship(float x, float y){
+        super(x, y);
         this.image = new Texture(Gdx.files.internal("PlayerShip.png")); //Assigns a default image of a ship to the instance's image variable
         this.textureRegion = new TextureRegion(image);
         this.movement = new Vector2(0, 0);
-        this.position = new Vector2(x, y);
-        this.rect = new Rectangle(this.position.x, this.position.y, this.image.getWidth(), this.image.getHeight());
+        //this.position = new Vector2(x, y);
+        //this.rect = new Rectangle(this.position.x, this.position.y, this.image.getWidth(), this.image.getHeight());
     }
 
     /**

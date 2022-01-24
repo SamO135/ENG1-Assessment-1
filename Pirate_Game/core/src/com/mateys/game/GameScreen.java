@@ -33,6 +33,7 @@ public class GameScreen extends ScreenAdapter {
 	/** The font, size, colour etc. for the text displaying the gold */
 	private BitmapFont goldText;
 	private BitmapFont islandText;
+	private BitmapFont hudText;
 	private int gold;
 	private Mateys game;
 	private PlayerShip player;
@@ -45,6 +46,7 @@ public class GameScreen extends ScreenAdapter {
 
 	private ArrayList<Bullet> allBullets;
 	private ArrayList<Island> allIslands = new ArrayList<Island>();
+	private ArrayList<Barrel> allBarrels = new ArrayList<Barrel>();
 
 	/** A list of all entities present in the game */
 	private ArrayList<Entity> allEntities = new ArrayList<Entity>();
@@ -68,7 +70,7 @@ public class GameScreen extends ScreenAdapter {
 		scoreText = createTextFont("fonts/BlackSamsGold.ttf", 100, Color.WHITE, 2f, Color.BLACK);
 		goldText = createTextFont("fonts/BlackSamsGold.ttf", 100, Color.GOLD, 2f, Color.BLACK);
 		islandText = createTextFont("fonts/CELTICHD.ttf", 60, Color.WHITE, 1f, Color.BLACK);
-
+		hudText = createTextFont("fonts/BlackSamsGold.ttf", 75, Color.WHITE, 2f, Color.BLACK);
 
 		// initialise camera
 		camera = new OrthographicCamera();
@@ -98,6 +100,20 @@ public class GameScreen extends ScreenAdapter {
 		allIslands.add(new Island("JamesCollege", tiledMap, 1000)); //Island is roughly at position (3800, 5500)
 		allIslands.add(new Island("LangwithCollege", tiledMap, 500)); //Island is roughly at position (6000, 3200)
 		allIslands.add(new Island("VanbrughCollege", tiledMap, 500)); //Island is roughly at position (6400, 6600)
+
+
+		//Spawn Barrels
+		/*for (int i = 0; i < 4; i++){
+			allBarrels.add(new Barrel((float)Math.random()*5000 + 1500, (float)Math.random()*5000 + 2000, 0));
+			allEntities.add(allBarrels.get(allBarrels.size()-1));
+		}*/
+		allBarrels.add(new Barrel(6500, 3800, 0));
+		allBarrels.add(new Barrel(4800, 4200, 90));
+		allBarrels.add(new Barrel(3100, 6500, 0));
+		allBarrels.add(new Barrel(6000, 7000, 90));
+		for (Barrel barrel : allBarrels){
+			allEntities.add(barrel);
+		}
 
 
 		// initialize the player
@@ -161,13 +177,22 @@ public class GameScreen extends ScreenAdapter {
 			newBullet.shootDown();
 		}
 
+		if (Gdx.input.isKeyJustPressed(Input.Keys.ESCAPE)){
+			//System.out.println(Math.random()*5000 + 2200);
+			for (Barrel barrel : allBarrels){
+				System.out.println(barrel.position);
+			}
+		}
+
+
+
 		// Check for bullet collision
 		for (Island island : allIslands) { // iterate through islands
 			for (Rectangle rect : island.getHitBoxes()) { // iterate through each island's hitboxes
 				Iterator<Bullet> i = allBullets.iterator();
 				while (i.hasNext()) {	// iterate through all bullets in game.
 					Bullet bullet = i.next();
-					if (bullet.getBulletRect().overlaps(rect)) {
+					if (bullet.getRect().overlaps(rect)) {
 						island.takeDamage(bullet.getDamage());	// if bullet collides with island, damage the island
 
 						if (island.getState() == 1) {
@@ -225,9 +250,25 @@ public class GameScreen extends ScreenAdapter {
 			}
 		}
 
+		//Check if the player has collided with a barrel
+		Iterator<Barrel> i = allBarrels.iterator();
+		while(i.hasNext()){			//loop through all barrels
+			Barrel barrel = i.next();
+			if(player.getRect().overlaps(barrel.getRect())){	//if player overlaps barrel
+				gold += 10;
+				i.remove();
+				allBarrels.remove(barrel);			//remove barrel and add gold
+				allEntities.remove(barrel);
+				barrel.dispose();
+			}
+		}
+
+
+
 		//Write text to Screen
-		scoreText.draw(game.batch, "Score: " + score, camera.position.x - 950, camera.position.y + 610);
-		goldText.draw(game.batch, "Gold " + gold, camera.position.x - 125, camera.position.y + 610);
+		scoreText.draw(game.batch, "Score: " + score, camera.position.x - 950, camera.position.y + 590);
+		goldText.draw(game.batch, "Gold " + gold, camera.position.x - 125, camera.position.y + 590);
+		hudText.draw(game.batch, "x: "+(Math.round(player.getX()))+"    "+"y: "+(Math.round(player.getY())), camera.position.x-950, camera.position.y+450);
 		islandText.draw(game.batch, allIslands.get(0).getName() + "\n     " + allIslands.get(0).getHealth(), 3620, 5550); // James College
 		islandText.draw(game.batch, allIslands.get(1).getName() + "\n      " + allIslands.get(1).getHealth(), 5950, 3250); // Langwith College
 		islandText.draw(game.batch, allIslands.get(2).getName() + "\n      " + allIslands.get(2).getHealth(), 6400, 6650); // Vanbruh College
