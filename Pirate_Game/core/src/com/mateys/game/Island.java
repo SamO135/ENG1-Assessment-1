@@ -11,24 +11,30 @@ import java.util.ArrayList;
 
 public class Island {
 
-    private int health;
     private final ArrayList<Rectangle> hitBoxes = new ArrayList<Rectangle>();
     private final String name;
+    private int health;
     private int state = 0; // 1 if island is destroyed/captured, 2 otherwise (i think)
-    public Vector2 location;
-    TiledMap tiledMap;
-    public float timeAlive = 0f;
-    private float period = 2f;
-    public Boolean ready = false;
+    private int shootRange;
+    private float timeBtwShots = 2f;
+    private float timeElapsed = 0f; //Used for the timer method
+    private Rectangle visionBox; // The area around the island where, if the player is inside, the island will start shooting
+    public Vector2 position;
+    private TiledMap tiledMap;
+    public Boolean readyToShoot = false;
 
 
-    public Island(String ObjectLayerName, TiledMap tiledMap, int health, Vector2 location) {
 
+    public Island(String ObjectLayerName, TiledMap tiledMap, int health, Vector2 pos) {
         this.name = ObjectLayerName;
         this.health = health;
-        this.location = location;
+        this.position = pos;
         this.tiledMap = tiledMap;
-        
+        this.shootRange = 2000;
+        this.visionBox = new Rectangle();
+        this.visionBox.setSize(this.shootRange);
+        this.visionBox.setCenter(this.position);
+
 
         for (MapObject object: this.tiledMap.getLayers().get(name).getObjects().getByType(RectangleMapObject.class)) {
             Rectangle rect = ((RectangleMapObject) object).getRectangle();
@@ -38,11 +44,11 @@ public class Island {
     }
 
     public void update() {
-        if (timeAlive > period) {
-            ready = true;
-            timeAlive = 0;
-        } else {
-            timeAlive += Gdx.graphics.getDeltaTime();
+        if (!isCaptured()){
+            if (timer(timeBtwShots))
+                readyToShoot = true;
+            else
+                readyToShoot = false;
         }
     }
 
@@ -81,5 +87,35 @@ public class Island {
     /** @return a list of all the hitboxes of the island */
     public ArrayList<Rectangle> getHitBoxes() {
         return hitBoxes;
+    }
+
+    /** @return true if the island has been captured, false otherwise*/
+    public boolean isCaptured(){
+        if (this.health <= 0)
+            return true;
+        else
+            return false;
+    }
+
+    /** @return a rect that specifies a region where the island can see the player. If they are not within this region, the island will not shoot. */
+    public Rectangle getVisionBox(){
+        return this.visionBox;
+    }
+
+    /**
+     * A timer method
+     * @param period A length of time in seconds (as a float)
+     * @return true every time a length of 'period' seconds passes, false otherwise
+     */
+    private boolean timer(float period){
+        if (timeElapsed > period){
+            timeElapsed = 0f;
+            return true;
+        }
+        else{
+            timeElapsed += Gdx.graphics.getDeltaTime();
+            return false;
+        }
+
     }
 }

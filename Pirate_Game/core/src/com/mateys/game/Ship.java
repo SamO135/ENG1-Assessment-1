@@ -8,17 +8,14 @@ import com.badlogic.gdx.math.Vector2;
 
 public class Ship extends Entity{
     public static final int MOVE_SPEED = 500;
-    protected Vector2 movement;
     private int health;
-
+    protected Vector2 direction;
 
     public Ship(float x, float y){
         super(x, y);
         this.image = new Texture(Gdx.files.internal("PlayerShip.png")); //Assigns a default image of a ship to the instance's image variable
         this.textureRegion = new TextureRegion(image);
-        this.movement = new Vector2(0, 0);
-        //this.position = new Vector2(x, y);
-        //this.rect = new Rectangle(this.position.x, this.position.y, this.image.getWidth(), this.image.getHeight());
+        this.direction = new Vector2(0, 0);
     }
 
     /**
@@ -40,22 +37,22 @@ public class Ship extends Entity{
     
     /** Move the ship to the left */
     public void moveLeft(){
-        this.movement.add(-1, 0); //set the 'direction' to left
+        this.direction.add(-1, 0); //set the 'direction' to left
         this.rotation = 270;
     }
     /** Move the ship to the right */
     public void moveRight(){
-        this.movement.add(1, 0); //set the 'direction' to right
+        this.direction.add(1, 0); //set the 'direction' to right
         this.rotation = 90;
     }
     /** Move the ship up */
     public void moveUp(){
-        this.movement.add(0, 1); //set the 'direction' to up
+        this.direction.add(0, 1); //set the 'direction' to up
         this.rotation = 180;
     }
     /** Move the ship down */
     public void moveDown(){
-        this.movement.add(0, -1); //set the 'direction' to down
+        this.direction.add(0, -1); //set the 'direction' to down
         this.rotation = 0;
     }
 

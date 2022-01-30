@@ -6,8 +6,7 @@ import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 
 public class PlayerShip extends Ship{
     private boolean canShoot = false;
-
-    private Boolean isDead = false;
+    private boolean isDead = false;
 
     public PlayerShip(float x, float y) {
         super(x, y);
@@ -16,12 +15,10 @@ public class PlayerShip extends Ship{
 
     /** Updates the position and rect of the player ship */
     public void update() {
-        // set ship position at: 'position' + (normalised 'movement' * 'MOVE_SPEED') * DeltaTime
         if (!isDead) {
-            this.position.mulAdd(this.movement.nor(), MOVE_SPEED * Gdx.graphics.getDeltaTime()); //calculates and sets new player position
+            this.position.mulAdd(this.direction.nor(), MOVE_SPEED * Gdx.graphics.getDeltaTime()); //calculates and sets new player position
             super.update();
         }
-        //this.rect.setPosition(this.position); //updates the player rect/hitbox
     }
 
     /** Renders the player ship at its position and rotation

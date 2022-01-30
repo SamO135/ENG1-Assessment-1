@@ -9,11 +9,10 @@ import com.badlogic.gdx.math.Vector2;
 public class Bullet extends Entity{
     private Vector2 velocity;
     public static final int MOVE_SPEED = 1000;
-    private int damage;
-    //private Rectangle bulletRect;
+    protected int damage;
     public boolean dead = false;
     public float timeAlive = 0f;
-    private float period;
+    protected float period;
 
 
     /**
@@ -27,9 +26,7 @@ public class Bullet extends Entity{
         this.period = period;
         this.image = new Texture(Gdx.files.internal("cannonBall.png"));
         this.textureRegion = new TextureRegion(image);
-        //this.position = new Vector2(x, y);
         this.velocity = new Vector2(0, 0);
-        //this.bulletRect = new Rectangle(this.position.x, this.position.y, 64, 64);
         this.damage = 50;
     }
 
@@ -37,7 +34,6 @@ public class Bullet extends Entity{
     public void update(){
         this.position.add(velocity);
         super.update();
-        //this.bulletRect.setPosition(this.position);
 
         if (timeAlive > period) {
             dead = true;
@@ -49,8 +45,6 @@ public class Bullet extends Entity{
     /** @return the damage of the bullet */
     public int getDamage(){return this.damage;}
 
-    /** @return bullet rect */
-    //public Rectangle getBulletRect() {return bulletRect;}
 
     /** @return boolean value whether the bullet has existed for too long */
     public boolean isDead() { return dead; }

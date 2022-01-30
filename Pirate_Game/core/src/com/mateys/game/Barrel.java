@@ -8,6 +8,12 @@ import com.badlogic.gdx.math.Vector2;
 
 public class Barrel extends Entity{
 
+    /**
+     * Contructs a barrel at the given position (with a preset image)
+     * @param x the x position of the barrel
+     * @param y the y position of the barrel
+     * @param rotation the rotation of the barrel in degrees (0 -360)
+     */
     public Barrel(float x, float y, int rotation){
         super(x, y);
         this.rotation = rotation;

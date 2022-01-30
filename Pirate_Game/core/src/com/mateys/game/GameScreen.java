@@ -22,7 +22,6 @@ import java.util.Iterator;
 
 
 public class GameScreen extends ScreenAdapter {
-	private final Mateys game;
 	private int score;
 	private int gold;
 	private float timeElapsed; //Used for the timer in the 'timer' method.
@@ -30,28 +29,28 @@ public class GameScreen extends ScreenAdapter {
 
 	private BitmapFont scoreText;
 	private BitmapFont goldText;
-	private BitmapFont islandText;
+	private BitmapFont islandText;		// All the different text types
 	private BitmapFont healthText;
 	private BitmapFont hudText;
-	TiledMap tiledMap;
-	TiledMapRenderer tiledMapRenderer;
-	/** A list of all the hitboxes of the islands and map boundary */
-	private ArrayList<Rectangle> rects = new ArrayList<Rectangle>();
-
-	private ArrayList<EnemyBullet> enemyBullets;
 	private BitmapFont completedTaskText;
 
-	private ArrayList<Bullet> playerBullets = new ArrayList<Bullet>();
-	private ArrayList<Island> allIslands = new ArrayList<Island>();
-	private ArrayList<Barrel> allBarrels = new ArrayList<Barrel>();
-	private ArrayList<Entity> allEntities = new ArrayList<Entity>();
+	private ArrayList<Rectangle> rects = new ArrayList<Rectangle>(); // A list of all the hitboxes of the islands and map boundary
+	private ArrayList<Bullet> allBullets = new ArrayList<Bullet>(); // List of all bullets
+	private ArrayList<Island> allIslands = new ArrayList<Island>(); // List of all islands
+	private ArrayList<Barrel> allBarrels = new ArrayList<Barrel>(); // List of all barrels
+	private ArrayList<Entity> allEntities = new ArrayList<Entity>(); // List of all Entities
 
 	private int barrelsCollected = 0;
 	private boolean isBarrelsTaskComplete;
 	private boolean isCoordTaskComplete;
 	private boolean isFinalTaskComplete;
 
+	private final Mateys game;
 	private OrthographicCamera camera;
+	private TiledMap tiledMap;
+	private TiledMapRenderer tiledMapRenderer;
+
+	public Island testIsland;
 
 
 
@@ -87,13 +86,6 @@ public class GameScreen extends ScreenAdapter {
 			Rectangle rect = ((RectangleMapObject) object).getRectangle();
 			rects.add(rect);
 		}
-
-		//initialize entities list
-		allEntities = new ArrayList<Entity>();
-
-		//initalize bullets list
-		playerBullets = new ArrayList<Bullet>();
-		enemyBullets = new ArrayList<EnemyBullet>();
 
 
 		//Initialize Islands
@@ -134,7 +126,7 @@ public class GameScreen extends ScreenAdapter {
 
 
 		// process user input -- movement
-		player.movement.set(0, 0);
+		player.direction.set(0, 0);
 		if (Gdx.input.isKeyPressed(Input.Keys.A)) {
 			player.rotation = 270;    // rotation is used to orient the ship depending on the direction of travel i.e. face left if moving left
 			player.moveLeft();
@@ -153,104 +145,78 @@ public class GameScreen extends ScreenAdapter {
 		}
 
 		// process user input -- shooting
-		if (Gdx.input.isKeyJustPressed(Input.Keys.LEFT)) {
-			Bullet newBullet = new Bullet(player.getX(), player.getY(), 1);
-			allEntities.add(newBullet);
-			playerBullets.add(newBullet);
-			newBullet.shootLeft();
-		} else if (Gdx.input.isKeyJustPressed(Input.Keys.RIGHT)) {
-			Bullet newBullet = new Bullet(player.getX(), player.getY(), 1);
-			allEntities.add(newBullet);
-			playerBullets.add(newBullet);
-			newBullet.shootRight();
-		} else if (Gdx.input.isKeyJustPressed(Input.Keys.UP)) {
-			Bullet newBullet = new Bullet(player.getX(), player.getY(), 1);
-			allEntities.add(newBullet);
-			playerBullets.add(newBullet);
-			newBullet.shootUp();
-		} else if (Gdx.input.isKeyJustPressed(Input.Keys.DOWN)) {
-			Bullet newBullet = new Bullet(player.getX(), player.getY(), 1);
-			allEntities.add(newBullet);
-			playerBullets.add(newBullet);
-			newBullet.shootDown();
-		}
-
-		if (Gdx.input.isKeyJustPressed(Input.Keys.ESCAPE)) {
-			//System.out.println(Math.random()*5000 + 2200);
-			for (Barrel barrel : allBarrels) {
-				System.out.println(barrel.position);
-				if (player.canShoot()) {
-					if (Gdx.input.isKeyJustPressed(Input.Keys.LEFT)) {
-						Bullet newBullet = new Bullet(player.getX(), player.getY(), 1);
-						allEntities.add(newBullet);
-						playerBullets.add(newBullet);
-						newBullet.shootLeft();
-					} else if (Gdx.input.isKeyJustPressed(Input.Keys.RIGHT)) {
-						Bullet newBullet = new Bullet(player.getX(), player.getY(), 1);
-						allEntities.add(newBullet);
-						playerBullets.add(newBullet);
-						newBullet.shootRight();
-					} else if (Gdx.input.isKeyJustPressed(Input.Keys.UP)) {
-						Bullet newBullet = new Bullet(player.getX(), player.getY(), 1);
-						allEntities.add(newBullet);
-						playerBullets.add(newBullet);
-						newBullet.shootUp();
-					} else if (Gdx.input.isKeyJustPressed(Input.Keys.DOWN)) {
-						Bullet newBullet = new Bullet(player.getX(), player.getY(), 1);
-						allEntities.add(newBullet);
-						playerBullets.add(newBullet);
-						newBullet.shootDown();
-					}
-				}
+		if (player.canShoot()){
+			if (Gdx.input.isKeyJustPressed(Input.Keys.LEFT)) {
+				Bullet newBullet = new Bullet(player.getX(), player.getY(), 1);
+				allEntities.add(newBullet);
+				allBullets.add(newBullet);
+				newBullet.shootLeft();
+			} else if (Gdx.input.isKeyJustPressed(Input.Keys.RIGHT)) {
+				Bullet newBullet = new Bullet(player.getX(), player.getY(), 1);
+				allEntities.add(newBullet);
+				allBullets.add(newBullet);
+				newBullet.shootRight();
+			} else if (Gdx.input.isKeyJustPressed(Input.Keys.UP)) {
+				Bullet newBullet = new Bullet(player.getX(), player.getY(), 1);
+				allEntities.add(newBullet);
+				allBullets.add(newBullet);
+				newBullet.shootUp();
+			} else if (Gdx.input.isKeyJustPressed(Input.Keys.DOWN)) {
+				Bullet newBullet = new Bullet(player.getX(), player.getY(), 1);
+				allEntities.add(newBullet);
+				allBullets.add(newBullet);
+				newBullet.shootDown();
 			}
 		}
+
+
+
+
 		// Check for bullet collision
 		for (Island island : allIslands) { // iterate through islands
+			island.update();
 			for (Rectangle rect : island.getHitBoxes()) { // iterate through each island's hitboxes
-				Iterator<Bullet> i = playerBullets.iterator();
+				Iterator<Bullet> i = allBullets.iterator();
 				while (i.hasNext()) {    // iterate through all bullets in game.
 					Bullet bullet = i.next();
-					if (bullet.getRect().overlaps(rect)) {
+					if (!(bullet instanceof EnemyBullet) && bullet.getRect().overlaps(rect)) {
 						island.takeDamage(bullet.getDamage());    // if bullet collides with island, damage the island
 
-						if (island.getState() == 1) {
+						if (island.getState() == 1) { // if island has been captured i.e. health == 0
 							gold += 50;
 							score += 100;
 						}
 						bullet.dispose();
 						i.remove();
-						playerBullets.remove(bullet);
+						allBullets.remove(bullet);
 						allEntities.remove(bullet);    // remove bullet from game
+					}
+					else if ((bullet instanceof EnemyBullet) && bullet.getRect().overlaps(player.getRect())){
+						player.takeDamage(bullet.getDamage());
+
+						bullet.dispose();
+						i.remove();
+						allBullets.remove(bullet);
+						allEntities.remove(bullet);		// remove bullet from the game
 					}
 
 					if (bullet.isDead()) { // if bullet has existed for too long i.e. it's been shot but hasn't collided with anything for x amount of seconds
 						bullet.dispose();
 						i.remove();
-						playerBullets.remove(bullet);
+						allBullets.remove(bullet);
 						allEntities.remove(bullet); // remove bullet from game
 					}
 				}
 			}
-		}
-
-		Iterator<EnemyBullet> enemyBulletIterator = enemyBullets.iterator();
-		while (enemyBulletIterator.hasNext()) {            //loop through all bullets
-			EnemyBullet someBullet = enemyBulletIterator.next();
-
-			if (someBullet.isDead()) { // if bullet has existed for too long i.e. it's been shot but hasn't collided with anything for x amount of seconds
-				someBullet.dispose();
-				enemyBulletIterator.remove();
-				enemyBullets.remove(someBullet);
-				allEntities.remove(someBullet); // remove bullet from game
-			}
-
-			if (someBullet.rect.overlaps(player.getRect())) {    //if player overlaps with bullet
-				player.takeDamage(20);
-				enemyBulletIterator.remove();
-				enemyBullets.remove(someBullet);            //remove bullet
-				allEntities.remove(someBullet);
+			if (island.readyToShoot && player.getRect().overlaps(island.getVisionBox())) {
+				EnemyBullet newEnemyBullet = new EnemyBullet(island.position.x, island.position.y, 20);
+				allEntities.add(newEnemyBullet);
+				allBullets.add(newEnemyBullet);
+				newEnemyBullet.targetPlayer(player.position, island.position);
+				//island.readyToShoot = false;
 			}
 		}
+
 
 		if (player.getHealth() <= 0) {
 			player.dispose();
@@ -281,7 +247,7 @@ public class GameScreen extends ScreenAdapter {
 		//This has to be checked after the player has been updated
 		for (Rectangle rect : rects) {
 			if (player.getRect().overlaps(rect)) {
-				player.position.mulAdd(player.movement.nor(), -(PlayerShip.MOVE_SPEED) * delta); //If the player rect/hitbox has overlapped a boundary, move back the same distance that it moved forward i.e. move back to where it was before it overlapped.
+				player.position.mulAdd(player.direction.nor(), -(PlayerShip.MOVE_SPEED) * delta); //If the player rect/hitbox has overlapped a boundary, move back the same distance that it moved forward i.e. move back to where it was before it overlapped.
 			}
 		}
 
@@ -299,16 +265,13 @@ public class GameScreen extends ScreenAdapter {
 			}
 		}
 
-
 		//Check task completion
 		if (barrelsCollected >= 3)
 			isBarrelsTaskComplete = true;
 		if (player.position.x >= 6000f && player.position.x <= 6100f && player.position.y >= 7050 && player.position.y <= 7250) {
-			//if (6050f % player.position.x <= Math.abs(50) && 7150 % player.position.y <= Math.abs(100)){
 			player.enableShooting();
 			isCoordTaskComplete = true;
 		}
-
 		isFinalTaskComplete = true;
 		for (Island college : allIslands) {
 			if (college.getHealth() > 0)    //Check final task completion
@@ -317,28 +280,14 @@ public class GameScreen extends ScreenAdapter {
 
 
 		//Write text to Screen
-
 		islandText.draw(game.batch, allIslands.get(0).getName() + "\n     " + allIslands.get(0).getHealth(), 3620, 5550); // James College
 		islandText.draw(game.batch, allIslands.get(1).getName() + "\n      " + allIslands.get(1).getHealth(), 5950, 3250); // Langwith College
 		islandText.draw(game.batch, allIslands.get(2).getName() + "\n      " + allIslands.get(2).getHealth(), 6400, 6650); // Vanbruh College
 
-
-		for (Island island : allIslands) {
-			island.update();
-			if (island.ready == true) {
-				EnemyBullet newEnemyBullet = new EnemyBullet(island.location.x, island.location.y, 20);
-				allEntities.add(newEnemyBullet);
-				enemyBullets.add(newEnemyBullet);
-				newEnemyBullet.targetPlayer(player.position, island.location);
-				island.ready = false;
-			}
-		}
-
-
-		if (barrelsCollected < 3)
-			hudText.draw(game.batch, "Collect 3 barrels: " + barrelsCollected + "/3", camera.position.x - 950, camera.position.y + 270);
-		else
+		if (isBarrelsTaskComplete)
 			completedTaskText.draw(game.batch, "Collect 3 barrels: Completed", camera.position.x - 950, camera.position.y + 270);
+		else
+			hudText.draw(game.batch, "Collect 3 barrels: " + barrelsCollected + "/3", camera.position.x - 950, camera.position.y + 270);
 
 		if (isCoordTaskComplete) {
 			completedTaskText.draw(game.batch, "Pick up weapon: Completed", camera.position.x - 950, camera.position.y + 190);
@@ -393,13 +342,11 @@ public class GameScreen extends ScreenAdapter {
 			timeElapsed = 0f;
 			return true;
 		}
-		else
+		else{
 			timeElapsed += Gdx.graphics.getDeltaTime();
 			return false;
+		}
 	}
-
-
-
 
 
 	@Override

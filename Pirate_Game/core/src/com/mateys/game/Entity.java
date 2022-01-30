@@ -38,7 +38,7 @@ public class Entity {
     public float getX(){return this.position.x;}
     /** @return the y position of the entity*/
     public float getY(){return this.position.y;}
-
+    /** @return the rect of the entity */
     public Rectangle getRect(){return this.rect;}
 
 }
