@@ -18,11 +18,7 @@ public class EnemyBullet extends Bullet {
         playerDirection.x = playerDirection.x / magnitude;
         playerDirection.y = playerDirection.y / magnitude;
 
-        System.out.println("X Velocity" + playerDirection.x);
-
         this.setVelocity(playerDirection.x * 10000, playerDirection.y * 10000);
-
-        // this.setVelocity(playerPos.x - islandPos.x, islandPos.y - playerPos.y);
     }
     
 }

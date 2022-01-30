@@ -13,7 +13,6 @@ import com.badlogic.gdx.maps.tiled.TmxMapLoader;
 import com.badlogic.gdx.maps.tiled.renderers.OrthogonalTiledMapRenderer;
 import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.math.Vector2;
-import com.badlogic.gdx.physics.box2d.*;
 import com.badlogic.gdx.utils.ScreenUtils;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.g2d.freetype.FreeTypeFontGenerator;
@@ -33,6 +32,7 @@ public class GameScreen extends ScreenAdapter {
 	/** The font, size, colour etc. for the text displaying the gold */
 	private BitmapFont goldText;
 	private BitmapFont islandText;
+	private BitmapFont healthText;
 	private BitmapFont hudText;
 	private int gold;
 	private Mateys game;
@@ -42,7 +42,7 @@ public class GameScreen extends ScreenAdapter {
 	/** A list of all the hitboxes of the islands and map boundary */
 	private ArrayList<Rectangle> rects = new ArrayList<Rectangle>();
 
-	private ArrayList<Bullet> enemyBullets;
+	private ArrayList<EnemyBullet> enemyBullets;
 	private ArrayList<Bullet> allBullets;
 	private ArrayList<Island> allIslands = new ArrayList<Island>();
 	private ArrayList<Barrel> allBarrels = new ArrayList<Barrel>();
@@ -67,6 +67,7 @@ public class GameScreen extends ScreenAdapter {
 		// create fonts
 		scoreText = createTextFont("fonts/BlackSamsGold.ttf", 100, Color.WHITE, 2f, Color.BLACK);
 		goldText = createTextFont("fonts/BlackSamsGold.ttf", 100, Color.GOLD, 2f, Color.BLACK);
+		healthText = createTextFont("fonts/BlackSamsGold.ttf", 100, Color.RED, 2f, Color.BLACK);
 		islandText = createTextFont("fonts/CELTICHD.ttf", 60, Color.WHITE, 1f, Color.BLACK);
 		hudText = createTextFont("fonts/BlackSamsGold.ttf", 75, Color.WHITE, 2f, Color.BLACK);
 
@@ -91,7 +92,7 @@ public class GameScreen extends ScreenAdapter {
 
 		//initalize bullets list
 		allBullets = new ArrayList<Bullet>();
-		enemyBullets = new ArrayList<Bullet>();
+		enemyBullets = new ArrayList<EnemyBullet>();
 
 		//Initialize Islands
 		allIslands.add(new Island("JamesCollege", tiledMap, 1000, new Vector2(3800, 5500))); //Island is roughly at position (3800, 5500)
@@ -212,6 +213,17 @@ public class GameScreen extends ScreenAdapter {
 			}
 		}
 
+		Iterator<EnemyBullet> enemyBulletIterator = enemyBullets.iterator();
+		while(enemyBulletIterator.hasNext()) {			//loop through all bullets
+			EnemyBullet someBullet = enemyBulletIterator.next();
+			if(someBullet.rect.overlaps(player.getRect())){	//if player overlaps barrel
+				player.takeDamage(20);
+				enemyBulletIterator.remove();
+				enemyBullets.remove(someBullet);			//remove barrel and add gold
+				allEntities.remove(someBullet);
+			}
+		}
+
 
 		// update camera position
 		camera.position.set(player.getX(), player.getY(), 0);
@@ -261,10 +273,10 @@ public class GameScreen extends ScreenAdapter {
 		}
 
 
-
 		//Write text to Screen
 		scoreText.draw(game.batch, "Score: " + score, camera.position.x - 950, camera.position.y + 590);
 		goldText.draw(game.batch, "Gold " + gold, camera.position.x - 125, camera.position.y + 590);
+		healthText.draw(game.batch, "Health: " + player.getHealth(), camera.position.x + 400, camera.position.y + 590);
 		hudText.draw(game.batch, "x: "+(Math.round(player.getX()))+"    "+"y: "+(Math.round(player.getY())), camera.position.x-950, camera.position.y+450);
 		islandText.draw(game.batch, allIslands.get(0).getName() + "\n     " + allIslands.get(0).getHealth(), 3620, 5550); // James College
 		islandText.draw(game.batch, allIslands.get(1).getName() + "\n      " + allIslands.get(1).getHealth(), 5950, 3250); // Langwith College

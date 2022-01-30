@@ -9,7 +9,7 @@ import com.badlogic.gdx.math.Vector2;
 public class Ship extends Entity{
     public static final int MOVE_SPEED = 500;
     protected Vector2 movement;
-    private float health;
+    private int health;
 
 
     public Ship(float x, float y){
@@ -28,7 +28,11 @@ public class Ship extends Entity{
     public void takeDamage(float damage){this.health -= damage;}
 
     /** @return the health of the Ship instance */
-    public float getHealth(){return this.health;}
+    public int getHealth(){return this.health;}
+
+    public void setHealth(int health) {
+        this.health = health;
+    }
 
     /** @return the rect of the ship */
     public Rectangle getRect(){return this.rect;}

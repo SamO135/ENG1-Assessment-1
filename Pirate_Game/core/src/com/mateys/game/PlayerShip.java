@@ -13,6 +13,7 @@ public class PlayerShip extends Ship{
 
     public PlayerShip(float x, float y) {
         super(x, y);
+        this.setHealth(100);
     }
 
     /** Updates the position and rect of the player ship */
@@ -31,7 +32,6 @@ public class PlayerShip extends Ship{
         //parameters are: TextureRegion, x position on screen, y position on screen, x position within TextureRegion, y position within TextureRegion, image width, image height, image x scale, image y scale, image rotation
         batch.draw(textureRegion, this.position.x - this.image.getWidth()/2, this.position.y - this.image.getHeight()/2, this.textureRegion.getRegionWidth()/2, this.textureRegion.getRegionHeight()/2, this.image.getWidth(), this.image.getHeight(), 1, 1, this.rotation);
     }
-
 
 
     public void dispose() {this.image.dispose();}
