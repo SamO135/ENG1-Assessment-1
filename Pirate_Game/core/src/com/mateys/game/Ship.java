@@ -7,8 +7,8 @@ import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.math.Vector2;
 
 public class Ship extends Entity{
-    public static final int MOVE_SPEED = 500;
-    protected Vector2 movement;
+    public static int MOVE_SPEED = 500;
+    protected Vector2 movement; // The direction of movement as a vector;
     private float health;
 
 

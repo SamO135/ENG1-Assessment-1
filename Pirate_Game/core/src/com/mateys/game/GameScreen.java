@@ -22,34 +22,35 @@ import java.util.Iterator;
 
 
 public class GameScreen extends ScreenAdapter {
-	private OrthographicCamera camera;
 	private int score;
-	/** The rate of passive score increase in seconds */
-	private float period = 1f;
-	/** The variable used to check if there has been a long enough delay since the last passive score increment */
-	private float timeElapsed = 0f;
-	/** The font, size, colour etc. for the text displaying the score */
-	private BitmapFont scoreText;
-	/** The font, size, colour etc. for the text displaying the gold */
-	private BitmapFont goldText;
-	private BitmapFont islandText;
-	private BitmapFont hudText;
 	private int gold;
-	private Mateys game;
+	private float timeElapsed; //Used for the timer in the 'timer' method.
 	private PlayerShip player;
-	TiledMap tiledMap;
-	TiledMapRenderer tiledMapRenderer;
-	private World world;
-	private Box2DDebugRenderer b2dr;
-	/** A list of all the hitboxes of the islands and map boundary */
-	private ArrayList<Rectangle> rects = new ArrayList<Rectangle>();
 
-	private ArrayList<Bullet> allBullets;
+	private BitmapFont scoreText;
+	private BitmapFont goldText;
+	private BitmapFont islandText;		// All the different text types
+	private BitmapFont hudText;
+	private BitmapFont completedTaskText;
+
+	private ArrayList<Rectangle> rects = new ArrayList<Rectangle>(); //A list of all the hitboxes of the islands and map boundary
+	private ArrayList<Bullet> allBullets = new ArrayList<Bullet>();
 	private ArrayList<Island> allIslands = new ArrayList<Island>();
 	private ArrayList<Barrel> allBarrels = new ArrayList<Barrel>();
-
-	/** A list of all entities present in the game */
 	private ArrayList<Entity> allEntities = new ArrayList<Entity>();
+
+	private int barrelsCollected = 0;
+	private boolean isBarrelsTaskComplete;
+	private boolean isCoordTaskComplete;
+	private boolean isFinalTaskComplete;
+
+	private OrthographicCamera camera;
+	private Mateys game;
+	private TiledMap tiledMap;
+	private TiledMapRenderer tiledMapRenderer;
+	private World world;
+	private Box2DDebugRenderer b2dr;
+
 
 
 
@@ -67,10 +68,11 @@ public class GameScreen extends ScreenAdapter {
 		this.world = world;
 
 		// create fonts
-		scoreText = createTextFont("fonts/BlackSamsGold.ttf", 100, Color.WHITE, 2f, Color.BLACK);
-		goldText = createTextFont("fonts/BlackSamsGold.ttf", 100, Color.GOLD, 2f, Color.BLACK);
+		scoreText = createTextFont("fonts/TreasureMapDeadhand-yLA3.ttf", 100, Color.WHITE, 2f, Color.BLACK);
+		goldText = createTextFont("fonts/TreasureMapDeadhand-yLA3.ttf", 100, Color.GOLD, 2f, Color.BLACK);
 		islandText = createTextFont("fonts/CELTICHD.ttf", 60, Color.WHITE, 1f, Color.BLACK);
-		hudText = createTextFont("fonts/BlackSamsGold.ttf", 75, Color.WHITE, 2f, Color.BLACK);
+		hudText = createTextFont("fonts/TreasureMapDeadhand-yLA3.ttf", 60, Color.WHITE, 2f, Color.BLACK);
+		completedTaskText = createTextFont("fonts/TreasureMapDeadhand-yLA3.ttf", 60, Color.GREEN, 2f, Color.BLACK);
 
 		// initialise camera
 		camera = new OrthographicCamera();
@@ -90,11 +92,6 @@ public class GameScreen extends ScreenAdapter {
 			rects.add(rect);
 		}
 
-		//initialize entities list
-		allEntities = new ArrayList<Entity>();
-
-		//initalize bullets list
-		allBullets = new ArrayList<Bullet>();
 
 		//Initialize Islands
 		allIslands.add(new Island("JamesCollege", tiledMap, 1000)); //Island is roughly at position (3800, 5500)
@@ -103,14 +100,10 @@ public class GameScreen extends ScreenAdapter {
 
 
 		//Spawn Barrels
-		/*for (int i = 0; i < 4; i++){
-			allBarrels.add(new Barrel((float)Math.random()*5000 + 1500, (float)Math.random()*5000 + 2000, 0));
-			allEntities.add(allBarrels.get(allBarrels.size()-1));
-		}*/
 		allBarrels.add(new Barrel(6500, 3800, 0));
 		allBarrels.add(new Barrel(4800, 4200, 90));
 		allBarrels.add(new Barrel(3100, 6500, 0));
-		allBarrels.add(new Barrel(6000, 7000, 90));
+		allBarrels.add(new Barrel(6050, 7150, 90));
 		for (Barrel barrel : allBarrels){
 			allEntities.add(barrel);
 		}
@@ -118,7 +111,6 @@ public class GameScreen extends ScreenAdapter {
 
 		// initialize the player
 		player = new PlayerShip(2500, 2500);
-
 		allEntities.add(player);
 	}
 
@@ -131,6 +123,9 @@ public class GameScreen extends ScreenAdapter {
 	@Override
 	public void render (float delta) {
 		ScreenUtils.clear(0.67f, 0.91f, 1f, 1);
+
+		// update camera position
+		camera.position.set(player.getX(), player.getY(), 0);
 		camera.update();
 		game.batch.setProjectionMatrix(camera.combined);
 
@@ -155,35 +150,29 @@ public class GameScreen extends ScreenAdapter {
 		}
 
 		// process user input -- shooting
-		if (Gdx.input.isKeyJustPressed(Input.Keys.LEFT)) {
-			Bullet newBullet = new Bullet(player.getX(), player.getY());
-			allEntities.add(newBullet);
-			allBullets.add(newBullet);
-			newBullet.shootLeft();
-		} else if (Gdx.input.isKeyJustPressed(Input.Keys.RIGHT)) {
-			Bullet newBullet = new Bullet(player.getX(), player.getY());
-			allEntities.add(newBullet);
-			allBullets.add(newBullet);
-			newBullet.shootRight();
-		} else if (Gdx.input.isKeyJustPressed(Input.Keys.UP)) {
-			Bullet newBullet = new Bullet(player.getX(), player.getY());
-			allEntities.add(newBullet);
-			allBullets.add(newBullet);
-			newBullet.shootUp();
-		} else if (Gdx.input.isKeyJustPressed(Input.Keys.DOWN)) {
-			Bullet newBullet = new Bullet(player.getX(), player.getY());
-			allEntities.add(newBullet);
-			allBullets.add(newBullet);
-			newBullet.shootDown();
-		}
-
-		if (Gdx.input.isKeyJustPressed(Input.Keys.ESCAPE)){
-			//System.out.println(Math.random()*5000 + 2200);
-			for (Barrel barrel : allBarrels){
-				System.out.println(barrel.position);
+		if(player.canShoot()){
+			if (Gdx.input.isKeyJustPressed(Input.Keys.LEFT)) {
+				Bullet newBullet = new Bullet(player.getX(), player.getY());
+				allEntities.add(newBullet);
+				allBullets.add(newBullet);
+				newBullet.shootLeft();
+			} else if (Gdx.input.isKeyJustPressed(Input.Keys.RIGHT)) {
+				Bullet newBullet = new Bullet(player.getX(), player.getY());
+				allEntities.add(newBullet);
+				allBullets.add(newBullet);
+				newBullet.shootRight();
+			} else if (Gdx.input.isKeyJustPressed(Input.Keys.UP)) {
+				Bullet newBullet = new Bullet(player.getX(), player.getY());
+				allEntities.add(newBullet);
+				allBullets.add(newBullet);
+				newBullet.shootUp();
+			} else if (Gdx.input.isKeyJustPressed(Input.Keys.DOWN)) {
+				Bullet newBullet = new Bullet(player.getX(), player.getY());
+				allEntities.add(newBullet);
+				allBullets.add(newBullet);
+				newBullet.shootDown();
 			}
 		}
-
 
 
 		// Check for bullet collision
@@ -216,15 +205,10 @@ public class GameScreen extends ScreenAdapter {
 		}
 
 
-		// update camera position
-		camera.position.set(player.getX(), player.getY(), 0);
 
 		// update timer - used for adding score over time
-		if (timeElapsed > period) {
-			timeElapsed = 0f;
+		if (timer(1)){
 			score += 1;
-		} else {
-			timeElapsed += delta;
 		}
 
 
@@ -256,6 +240,7 @@ public class GameScreen extends ScreenAdapter {
 			Barrel barrel = i.next();
 			if(player.getRect().overlaps(barrel.getRect())){	//if player overlaps barrel
 				gold += 10;
+				barrelsCollected += 1;
 				i.remove();
 				allBarrels.remove(barrel);			//remove barrel and add gold
 				allEntities.remove(barrel);
@@ -264,20 +249,56 @@ public class GameScreen extends ScreenAdapter {
 		}
 
 
+		//Check task completion
+		if (barrelsCollected >= 3)
+			isBarrelsTaskComplete = true;
+		if (player.position.x >= 6000f && player.position.x <= 6100f && player.position.y >= 7050 && player.position.y <= 7250){
+		//if (6050f % player.position.x <= Math.abs(50) && 7150 % player.position.y <= Math.abs(100)){
+			player.enableShooting();
+			isCoordTaskComplete = true;
+		}
+
+		isFinalTaskComplete = true;
+		for (Island college: allIslands){
+			if (college.getHealth() > 0)	//Check final task completion
+				isFinalTaskComplete = false;
+		}
+
+
 
 		//Write text to Screen
-		scoreText.draw(game.batch, "Score: " + score, camera.position.x - 950, camera.position.y + 590);
-		goldText.draw(game.batch, "Gold " + gold, camera.position.x - 125, camera.position.y + 590);
-		hudText.draw(game.batch, "x: "+(Math.round(player.getX()))+"    "+"y: "+(Math.round(player.getY())), camera.position.x-950, camera.position.y+450);
 		islandText.draw(game.batch, allIslands.get(0).getName() + "\n     " + allIslands.get(0).getHealth(), 3620, 5550); // James College
 		islandText.draw(game.batch, allIslands.get(1).getName() + "\n      " + allIslands.get(1).getHealth(), 5950, 3250); // Langwith College
 		islandText.draw(game.batch, allIslands.get(2).getName() + "\n      " + allIslands.get(2).getHealth(), 6400, 6650); // Vanbruh College
+
+		if (barrelsCollected < 3)
+			hudText.draw(game.batch, "Collect 3 barrels: " + barrelsCollected + "/3", camera.position.x - 950, camera.position.y + 270);
+		else
+			completedTaskText.draw(game.batch, "Collect 3 barrels: Completed", camera.position.x - 950, camera.position.y + 270);
+
+		if (isCoordTaskComplete){
+			completedTaskText.draw(game.batch, "Pick up weapon: Completed", camera.position.x - 950, camera.position.y + 190);
+			hudText.draw(game.batch, "Final Objective", camera.position.x - 950, camera.position.y + 50);
+			if (isFinalTaskComplete)
+				completedTaskText.draw(game.batch, "Capture all colleges: Completed", camera.position.x - 950, camera.position.y + -30);
+			else
+				hudText.draw(game.batch, "Capture all colleges", camera.position.x - 950, camera.position.y - 30);
+		}
+		else
+			hudText.draw(game.batch, "Pick up weapon at: (6050, 7150)", camera.position.x - 950, camera.position.y + 190);
+
+		scoreText.draw(game.batch, "Score: " + score, camera.position.x - 950, camera.position.y + 620);
+		goldText.draw(game.batch, "Gold: " + gold, camera.position.x - 125, camera.position.y + 620);
+		hudText.draw(game.batch, "x: "+(Math.round(player.getX()))+"    "+"y: "+(Math.round(player.getY())), camera.position.x-950, camera.position.y+470);
+
+
 
 		b2dr.render(world, camera.combined);
 
 		// End Batch
 		game.batch.end();
 	}
+
 
 
 	/** Creates a font based on the parameters provided and returns it, you can then use the .draw method to display text with this font.
@@ -287,7 +308,7 @@ public class GameScreen extends ScreenAdapter {
 	 * @param borderWidth The width of the border around the text
 	 * @param borderColour The colour of the border
 	 */
-	public BitmapFont createTextFont(String fontPath, int fontSize, Color fontColour, float borderWidth, Color borderColour){
+	private BitmapFont createTextFont(String fontPath, int fontSize, Color fontColour, float borderWidth, Color borderColour){
 		FreeTypeFontGenerator fontGenerator = new FreeTypeFontGenerator(Gdx.files.internal(fontPath));
 		FreeTypeFontGenerator.FreeTypeFontParameter fontParameter = new FreeTypeFontGenerator.FreeTypeFontParameter();
 		fontParameter.size = fontSize;
@@ -297,6 +318,26 @@ public class GameScreen extends ScreenAdapter {
 		BitmapFont bitmapFont = fontGenerator.generateFont(fontParameter);
 		return bitmapFont;
 	}
+
+
+	/**
+	 * A timer method
+	 * @param period A length of time in seconds (as a float)
+	 * @return true every time a length of 'period' seconds passes, false otherwise
+	 */
+	private boolean timer(float period){
+		if (timeElapsed > period){
+			timeElapsed = 0f;
+			return true;
+		}
+		else
+			timeElapsed += Gdx.graphics.getDeltaTime();
+			return false;
+	}
+
+
+
+
 
 	@Override
 	public void dispose() {
