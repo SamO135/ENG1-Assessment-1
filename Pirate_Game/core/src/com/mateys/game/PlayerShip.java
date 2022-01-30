@@ -1,14 +1,11 @@
 package com.mateys.game;
 
 import com.badlogic.gdx.Gdx;
-import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
-import com.badlogic.gdx.graphics.g2d.TextureRegion;
-import com.badlogic.gdx.math.Rectangle;
-import com.badlogic.gdx.math.Vector2;
 
 
 public class PlayerShip extends Ship{
+    private boolean canShoot = false;
 
     private Boolean isDead = false;
 
@@ -38,6 +35,14 @@ public class PlayerShip extends Ship{
         }
     }
 
+    /** Enables shooting with the cannon */
+    public void enableShooting(){this.canShoot = true;}
+
+    /** Disables shooting with the cannon */
+    public void disableShooting(){this.canShoot = false;}
+
+    /** @return true if the player is able to shoot its cannon, false otherwise. */
+    public boolean canShoot(){return this.canShoot;}
 
     public void dispose() {
         this.image.dispose();

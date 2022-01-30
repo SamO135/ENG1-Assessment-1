@@ -27,7 +27,6 @@ public class Entity {
     protected void render(SpriteBatch batch){
         //batch.draw(image, position.x, position.y);
         batch.draw(textureRegion, this.position.x - this.image.getWidth()/2, this.position.y - this.image.getHeight()/2, this.textureRegion.getRegionWidth()/2, this.textureRegion.getRegionHeight()/2, this.image.getWidth(), this.image.getHeight(), 1, 1, this.rotation);
-
     }
 
     protected void update(){
