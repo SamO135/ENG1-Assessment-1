@@ -39,8 +39,6 @@ public class GameScreen extends ScreenAdapter {
 	private PlayerShip player;
 	TiledMap tiledMap;
 	TiledMapRenderer tiledMapRenderer;
-	private World world;
-	private Box2DDebugRenderer b2dr;
 	/** A list of all the hitboxes of the islands and map boundary */
 	private ArrayList<Rectangle> rects = new ArrayList<Rectangle>();
 
@@ -65,7 +63,6 @@ public class GameScreen extends ScreenAdapter {
 	@Override
 	public void show() {
 
-		this.world = world;
 
 		// create fonts
 		scoreText = createTextFont("fonts/BlackSamsGold.ttf", 100, Color.WHITE, 2f, Color.BLACK);
@@ -82,8 +79,6 @@ public class GameScreen extends ScreenAdapter {
 		// load map
 		tiledMap = new TmxMapLoader().load("PirateMap.tmx");
 		tiledMapRenderer = new OrthogonalTiledMapRenderer(tiledMap);
-		world = new World(new Vector2(0, 0), true);
-		b2dr = new Box2DDebugRenderer();
 
 
 		for (MapObject object: tiledMap.getLayers().get("LandObject").getObjects().getByType(RectangleMapObject.class)) {
@@ -286,7 +281,6 @@ public class GameScreen extends ScreenAdapter {
 			}
 		}
 
-		b2dr.render(world, camera.combined);
 
 		// End Batch
 		game.batch.end();
