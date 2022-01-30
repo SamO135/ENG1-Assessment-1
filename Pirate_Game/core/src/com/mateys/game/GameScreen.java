@@ -232,6 +232,10 @@ public class GameScreen extends ScreenAdapter {
 			}
 		}
 
+		if (player.getHealth() <= 0) {
+			player.dispose();
+		}
+
 
 		// update camera position
 		camera.position.set(player.getX(), player.getY(), 0);
