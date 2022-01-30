@@ -154,22 +154,22 @@ public class GameScreen extends ScreenAdapter {
 
 		// process user input -- shooting
 		if (Gdx.input.isKeyJustPressed(Input.Keys.LEFT)) {
-			Bullet newBullet = new Bullet(player.getX(), player.getY());
+			Bullet newBullet = new Bullet(player.getX(), player.getY(), 1);
 			allEntities.add(newBullet);
 			allBullets.add(newBullet);
 			newBullet.shootLeft();
 		} else if (Gdx.input.isKeyJustPressed(Input.Keys.RIGHT)) {
-			Bullet newBullet = new Bullet(player.getX(), player.getY());
+			Bullet newBullet = new Bullet(player.getX(), player.getY(), 1);
 			allEntities.add(newBullet);
 			allBullets.add(newBullet);
 			newBullet.shootRight();
 		} else if (Gdx.input.isKeyJustPressed(Input.Keys.UP)) {
-			Bullet newBullet = new Bullet(player.getX(), player.getY());
+			Bullet newBullet = new Bullet(player.getX(), player.getY(), 1);
 			allEntities.add(newBullet);
 			allBullets.add(newBullet);
 			newBullet.shootUp();
 		} else if (Gdx.input.isKeyJustPressed(Input.Keys.DOWN)) {
-			Bullet newBullet = new Bullet(player.getX(), player.getY());
+			Bullet newBullet = new Bullet(player.getX(), player.getY(), 1);
 			allEntities.add(newBullet);
 			allBullets.add(newBullet);
 			newBullet.shootDown();
@@ -216,10 +216,18 @@ public class GameScreen extends ScreenAdapter {
 		Iterator<EnemyBullet> enemyBulletIterator = enemyBullets.iterator();
 		while(enemyBulletIterator.hasNext()) {			//loop through all bullets
 			EnemyBullet someBullet = enemyBulletIterator.next();
-			if(someBullet.rect.overlaps(player.getRect())){	//if player overlaps barrel
+
+			if (someBullet.isDead()) { // if bullet has existed for too long i.e. it's been shot but hasn't collided with anything for x amount of seconds
+				someBullet.dispose();
+				enemyBulletIterator.remove();
+				enemyBullets.remove(someBullet);
+				allEntities.remove(someBullet); // remove bullet from game
+			}
+
+			if(someBullet.rect.overlaps(player.getRect())){	//if player overlaps with bullet
 				player.takeDamage(20);
 				enemyBulletIterator.remove();
-				enemyBullets.remove(someBullet);			//remove barrel and add gold
+				enemyBullets.remove(someBullet);			//remove bullet
 				allEntities.remove(someBullet);
 			}
 		}
@@ -285,7 +293,7 @@ public class GameScreen extends ScreenAdapter {
 		for (Island island : allIslands) {
 			island.update();
 			if (island.ready == true) {
-				EnemyBullet newEnemyBullet = new EnemyBullet(island.location.x, island.location.y);
+				EnemyBullet newEnemyBullet = new EnemyBullet(island.location.x, island.location.y, 20);
 				allEntities.add(newEnemyBullet);
 				enemyBullets.add(newEnemyBullet);
 				newEnemyBullet.targetPlayer(player.position, island.location);

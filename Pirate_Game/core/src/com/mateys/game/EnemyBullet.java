@@ -7,8 +7,8 @@ import com.mateys.game.Bullet;
 public class EnemyBullet extends Bullet {
 
 
-    public EnemyBullet(float x, float y) {
-        super(x, y);
+    public EnemyBullet(float x, float y, float period) {
+        super(x, y, period);
     }
 
     public void targetPlayer(Vector2 playerPos, Vector2 islandPos) {
@@ -18,7 +18,7 @@ public class EnemyBullet extends Bullet {
         playerDirection.x = playerDirection.x / magnitude;
         playerDirection.y = playerDirection.y / magnitude;
 
-        this.setVelocity(playerDirection.x * 10000, playerDirection.y * 10000);
+        this.setVelocity(playerDirection.x * 15000, playerDirection.y * 15000);
     }
     
 }

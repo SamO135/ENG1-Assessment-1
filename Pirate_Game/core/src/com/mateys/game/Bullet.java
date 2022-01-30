@@ -13,7 +13,7 @@ public class Bullet extends Entity{
     //private Rectangle bulletRect;
     public boolean dead = false;
     public float timeAlive = 0f;
-    private float period = 1f;
+    private float period;
 
 
     /**
@@ -21,8 +21,10 @@ public class Bullet extends Entity{
      * @param x the x position of the bullet
      * @param y the y position of the bullet
      */
-    public Bullet(float x, float y){
+    public Bullet(float x, float y, float period){
         super(x, y);
+
+        this.period = period;
         this.image = new Texture(Gdx.files.internal("cannonBall.png"));
         this.textureRegion = new TextureRegion(image);
         //this.position = new Vector2(x, y);
