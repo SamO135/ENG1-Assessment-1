@@ -44,6 +44,7 @@ public class GameScreen extends ScreenAdapter {
 	/** A list of all the hitboxes of the islands and map boundary */
 	private ArrayList<Rectangle> rects = new ArrayList<Rectangle>();
 
+	private ArrayList<Bullet> enemyBullets;
 	private ArrayList<Bullet> allBullets;
 	private ArrayList<Island> allIslands = new ArrayList<Island>();
 	private ArrayList<Barrel> allBarrels = new ArrayList<Barrel>();
@@ -95,11 +96,12 @@ public class GameScreen extends ScreenAdapter {
 
 		//initalize bullets list
 		allBullets = new ArrayList<Bullet>();
+		enemyBullets = new ArrayList<Bullet>();
 
 		//Initialize Islands
-		allIslands.add(new Island("JamesCollege", tiledMap, 1000)); //Island is roughly at position (3800, 5500)
-		allIslands.add(new Island("LangwithCollege", tiledMap, 500)); //Island is roughly at position (6000, 3200)
-		allIslands.add(new Island("VanbrughCollege", tiledMap, 500)); //Island is roughly at position (6400, 6600)
+		allIslands.add(new Island("JamesCollege", tiledMap, 1000, new Vector2(3800, 5500))); //Island is roughly at position (3800, 5500)
+		allIslands.add(new Island("LangwithCollege", tiledMap, 500, new Vector2(6000, 3200))); //Island is roughly at position (6000, 3200)
+		allIslands.add(new Island("VanbrughCollege", tiledMap, 500, new Vector2(6400, 6600))); //Island is roughly at position (6400, 6600)
 
 
 		//Spawn Barrels
@@ -272,6 +274,17 @@ public class GameScreen extends ScreenAdapter {
 		islandText.draw(game.batch, allIslands.get(0).getName() + "\n     " + allIslands.get(0).getHealth(), 3620, 5550); // James College
 		islandText.draw(game.batch, allIslands.get(1).getName() + "\n      " + allIslands.get(1).getHealth(), 5950, 3250); // Langwith College
 		islandText.draw(game.batch, allIslands.get(2).getName() + "\n      " + allIslands.get(2).getHealth(), 6400, 6650); // Vanbruh College
+
+		for (Island island : allIslands) {
+			island.update();
+			if (island.ready == true) {
+				EnemyBullet newEnemyBullet = new EnemyBullet(island.location.x, island.location.y);
+				allEntities.add(newEnemyBullet);
+				enemyBullets.add(newEnemyBullet);
+				newEnemyBullet.targetPlayer(player.position, island.location);
+				island.ready = false;
+			}
+		}
 
 		b2dr.render(world, camera.combined);
 
