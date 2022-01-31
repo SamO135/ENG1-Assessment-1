@@ -6,7 +6,6 @@ import com.badlogic.gdx.maps.objects.RectangleMapObject;
 import com.badlogic.gdx.maps.tiled.TiledMap;
 import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.math.Vector2;
-
 import java.util.ArrayList;
 
 public class Island {
@@ -24,8 +23,14 @@ public class Island {
     public Boolean readyToShoot = false;
 
 
-
-    public Island(String ObjectLayerName, TiledMap tiledMap, int health, Vector2 pos) {
+    /**
+     * Constructs a new Island object
+     * @param tiledMap The .tmx file that contains the map layout/data
+     * @param ObjectLayerName The name of a layer in the .tmx file
+     * @param health The health given to the island
+     * @param pos The position of the island
+     */
+    public Island(TiledMap tiledMap, String ObjectLayerName, int health, Vector2 pos) {
         this.name = ObjectLayerName;
         this.health = health;
         this.position = pos;

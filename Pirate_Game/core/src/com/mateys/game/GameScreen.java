@@ -39,6 +39,7 @@ public class GameScreen extends ScreenAdapter {
 	private ArrayList<Island> allIslands = new ArrayList<Island>(); // List of all islands
 	private ArrayList<Barrel> allBarrels = new ArrayList<Barrel>(); // List of all barrels
 	private ArrayList<Entity> allEntities = new ArrayList<Entity>(); // List of all Entities
+	private ArrayList<Ship> allShips = new ArrayList<Ship>(); // List of all Ships (excluding the player ship)
 
 	private int barrelsCollected = 0;
 	private boolean isBarrelsTaskComplete;
@@ -50,7 +51,6 @@ public class GameScreen extends ScreenAdapter {
 	private TiledMap tiledMap;
 	private TiledMapRenderer tiledMapRenderer;
 
-	public Island testIsland;
 
 
 
@@ -87,11 +87,10 @@ public class GameScreen extends ScreenAdapter {
 			rects.add(rect);
 		}
 
-
 		//Initialize Islands
-		allIslands.add(new Island("JamesCollege", tiledMap, 1000, new Vector2(3800, 5500))); //Island is roughly at position (3800, 5500)
-		allIslands.add(new Island("LangwithCollege", tiledMap, 500, new Vector2(6000, 3200))); //Island is roughly at position (6000, 3200)
-		allIslands.add(new Island("VanbrughCollege", tiledMap, 500, new Vector2(6400, 6600))); //Island is roughly at position (6400, 6600)
+		allIslands.add(new Island(tiledMap,"JamesCollege",1000, new Vector2(3800, 5500))); //Island is roughly at position (3800, 5500)
+		allIslands.add(new Island(tiledMap,"LangwithCollege",500, new Vector2(6000, 3200))); //Island is roughly at position (6000, 3200)
+		allIslands.add(new Island(tiledMap,"VanbrughCollege", 500, new Vector2(6400, 6600))); //Island is roughly at position (6400, 6600)
 
 
 		//Spawn Barrels
@@ -101,6 +100,16 @@ public class GameScreen extends ScreenAdapter {
 		allBarrels.add(new Barrel(6050, 7150, 90));
 		for (Barrel barrel : allBarrels){
 			allEntities.add(barrel);
+		}
+
+		//Spawn Ships
+		allShips.add(new Ship(3500, 3300, "Ship_Green.png"));
+		allShips.add(new Ship(4500, 4100, "Ship_Green.png"));
+		allShips.add(new Ship(4250, 6700, "Ship_Black.png"));
+		allShips.add(new Ship(5700, 5700, "Ship_Black.png"));
+		for (Ship ship : allShips){
+			allEntities.add(ship);
+			rects.add(ship.getRect());
 		}
 
 
@@ -319,6 +328,7 @@ public class GameScreen extends ScreenAdapter {
 	 * @param fontColour The colour of the font
 	 * @param borderWidth The width of the border around the text
 	 * @param borderColour The colour of the border
+	 * @return the resulting font as type BitmapFont
 	 */
 	private BitmapFont createTextFont(String fontPath, int fontSize, Color fontColour, float borderWidth, Color borderColour){
 		FreeTypeFontGenerator fontGenerator = new FreeTypeFontGenerator(Gdx.files.internal(fontPath));
