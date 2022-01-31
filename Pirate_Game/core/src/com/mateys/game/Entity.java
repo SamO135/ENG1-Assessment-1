@@ -7,14 +7,16 @@ import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.math.Vector2;
 
 public abstract class Entity {
-    protected Texture image = new Texture("PlayerShip.png");
-    protected Vector2 position; // position vector of entity
-    protected TextureRegion textureRegion;
-    protected Rectangle rect; // The hitbox of the entity
-    protected int rotation;
+    private Rectangle rect; // The hitbox of the entity
+    public Texture image;
+    public Vector2 position; // position vector of entity
+    public TextureRegion textureRegion;
+    public int rotation;
 
 
-    protected Entity(float x, float y){
+    public Entity(float x, float y){
+        this.image = new Texture("PlayerShip.png");
+        this.textureRegion = new TextureRegion(image);
         this.position = new Vector2(x, y);
         this.rect = new Rectangle(this.position.x, this.position.y, this.image.getWidth(), this.image.getHeight());
     }
@@ -23,11 +25,11 @@ public abstract class Entity {
      * Draws the entity image at its x and y position
      * @param batch a SpriteBatch instance
      */
-    protected void render(SpriteBatch batch){
+    public void render(SpriteBatch batch){
         batch.draw(textureRegion, this.position.x - this.image.getWidth()/2, this.position.y - this.image.getHeight()/2, this.textureRegion.getRegionWidth()/2, this.textureRegion.getRegionHeight()/2, this.image.getWidth(), this.image.getHeight(), 1, 1, this.rotation);
     }
 
-    protected void update(){
+    public void update(){
         this.rect.setPosition(this.position);
     }
 

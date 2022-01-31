@@ -6,6 +6,11 @@ import com.badlogic.gdx.Gdx;
 public class PlayerShip extends Ship{
     private boolean canShoot = false;
 
+    /**
+     * Constructs a new player object
+     * @param x the x position of the player
+     * @param y the y position of the player
+     */
     public PlayerShip(float x, float y) {
         super(x, y);
         this.setHealth(100);
@@ -14,7 +19,7 @@ public class PlayerShip extends Ship{
     /** Updates the position and rect of the player ship */
     public void update() {
         if (!isDead) {
-            this.position.mulAdd(this.direction.nor(), MOVE_SPEED * Gdx.graphics.getDeltaTime()); //calculates and sets new player position
+            this.position.mulAdd(this.direction.nor(), moveSpeed * Gdx.graphics.getDeltaTime()); //calculates and sets new player position
             super.update();
         }
     }
@@ -32,6 +37,6 @@ public class PlayerShip extends Ship{
     public void dispose() {
         this.image.dispose();
         this.isDead = true;
-        this.rect.setPosition(-10000, -10000);
+        //this.rect.setPosition(-10000, -10000);
     }
 }

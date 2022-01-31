@@ -8,10 +8,10 @@ import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.math.Vector2;
 
 public class Ship extends Entity{
-    public static final int MOVE_SPEED = 500;
     private int health;
-    protected boolean isDead = false;
-    protected Vector2 direction;
+    public static final int moveSpeed = 500;
+    public boolean isDead = false;
+    public Vector2 direction;
 
     /**
      * Constructs a new Ship
@@ -53,19 +53,24 @@ public class Ship extends Entity{
      * subtracts damage from health
      * @param damage the amount of health to remove
      */
-    public void takeDamage(float damage){this.health -= damage;}
+    public void takeDamage(float damage){
+        this.health -= damage;
+        if (health < 0)
+            health = 0;
+    }
 
     /** @return the health of the Ship instance */
     public int getHealth(){return this.health;}
 
+    /**
+     * Sets the health of the ship
+     * @param health the ship's health as an integer
+     */
     public void setHealth(int health) {
         this.health = health;
     }
 
-    /** @return the rect of the ship */
-    public Rectangle getRect(){return this.rect;}
 
-    
     /** Move the ship to the left */
     public void moveLeft(){
         this.direction.add(-1, 0); //set the 'direction' to left

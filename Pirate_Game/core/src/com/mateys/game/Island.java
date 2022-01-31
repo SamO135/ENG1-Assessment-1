@@ -12,14 +12,15 @@ public class Island {
 
     private final ArrayList<Rectangle> hitBoxes = new ArrayList<Rectangle>();
     private final String name;
+    private final int goldStored;
     private int health;
     private int state = 0; // 1 if island is destroyed/captured, 2 otherwise (i think)
     private int shootRange;
     private float timeBtwShots = 2f;
     private float timeElapsed = 0f; //Used for the timer method
     private Rectangle visionBox; // The area around the island where, if the player is inside, the island will start shooting
-    public Vector2 position;
     private TiledMap tiledMap;
+    public Vector2 position;
     public Boolean readyToShoot = false;
 
 
@@ -30,7 +31,7 @@ public class Island {
      * @param health The health given to the island
      * @param pos The position of the island
      */
-    public Island(TiledMap tiledMap, String ObjectLayerName, int health, Vector2 pos) {
+    public Island(TiledMap tiledMap, String ObjectLayerName, int health, Vector2 pos, int goldStored) {
         this.name = ObjectLayerName;
         this.health = health;
         this.position = pos;
@@ -39,6 +40,7 @@ public class Island {
         this.visionBox = new Rectangle();
         this.visionBox.setSize(this.shootRange);
         this.visionBox.setCenter(this.position);
+        this.goldStored = goldStored;
 
 
         for (MapObject object: this.tiledMap.getLayers().get(name).getObjects().getByType(RectangleMapObject.class)) {
@@ -108,6 +110,13 @@ public class Island {
     }
 
     /**
+     * @return an integer value of the amount of gold stored on the island
+     */
+    public int getGoldStored(){
+        return this.goldStored;
+    }
+
+    /**
      * A timer method
      * @param period A length of time in seconds (as a float)
      * @return true every time a length of 'period' seconds passes, false otherwise
@@ -121,6 +130,5 @@ public class Island {
             timeElapsed += Gdx.graphics.getDeltaTime();
             return false;
         }
-
     }
 }

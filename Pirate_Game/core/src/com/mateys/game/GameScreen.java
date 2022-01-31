@@ -88,9 +88,9 @@ public class GameScreen extends ScreenAdapter {
 		}
 
 		//Initialize Islands
-		allIslands.add(new Island(tiledMap,"JamesCollege",1000, new Vector2(3800, 5500))); //Island is roughly at position (3800, 5500)
-		allIslands.add(new Island(tiledMap,"LangwithCollege",500, new Vector2(6000, 3200))); //Island is roughly at position (6000, 3200)
-		allIslands.add(new Island(tiledMap,"VanbrughCollege", 500, new Vector2(6400, 6600))); //Island is roughly at position (6400, 6600)
+		allIslands.add(new Island(tiledMap,"JamesCollege",1000, new Vector2(3800, 5500), 100)); //Island is roughly at position (3800, 5500)
+		allIslands.add(new Island(tiledMap,"LangwithCollege",500, new Vector2(6000, 3200), 50)); //Island is roughly at position (6000, 3200)
+		allIslands.add(new Island(tiledMap,"VanbrughCollege", 500, new Vector2(6400, 6600), 50)); //Island is roughly at position (6400, 6600)
 
 
 		//Spawn Barrels
@@ -192,7 +192,7 @@ public class GameScreen extends ScreenAdapter {
 						island.takeDamage(bullet.getDamage());    // if bullet collides with island, damage the island
 
 						if (island.getState() == 1) { // if island has been captured i.e. health == 0
-							gold += 50;
+							gold += island.getGoldStored();
 							score += 100;
 						}
 						bullet.dispose();
@@ -217,12 +217,11 @@ public class GameScreen extends ScreenAdapter {
 					}
 				}
 			}
-			if (island.readyToShoot && player.getRect().overlaps(island.getVisionBox())) {
+			if (island.readyToShoot && !player.isDead && player.getRect().overlaps(island.getVisionBox())) {
 				EnemyBullet newEnemyBullet = new EnemyBullet(island.position.x, island.position.y, 20);
 				allEntities.add(newEnemyBullet);
 				allBullets.add(newEnemyBullet);
 				newEnemyBullet.targetPlayer(player.position, island.position);
-				//island.readyToShoot = false;
 			}
 		}
 
@@ -256,8 +255,13 @@ public class GameScreen extends ScreenAdapter {
 		//This has to be checked after the player has been updated
 		for (Rectangle rect : rects) {
 			if (player.getRect().overlaps(rect)) {
-				player.position.mulAdd(player.direction.nor(), -(PlayerShip.MOVE_SPEED) * delta); //If the player rect/hitbox has overlapped a boundary, move back the same distance that it moved forward i.e. move back to where it was before it overlapped.
+				player.position.mulAdd(player.direction.nor(), -(PlayerShip.moveSpeed) * delta); //If the player rect/hitbox has overlapped a boundary, move back the same distance that it moved forward i.e. move back to where it was before it overlapped.
 			}
+			if (player.isDead){
+				rects.remove(player.getRect());
+				allEntities.remove(player);
+			}
+
 		}
 
 		//Check if the player has collided with a barrel

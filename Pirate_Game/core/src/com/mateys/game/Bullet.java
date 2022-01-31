@@ -3,16 +3,15 @@ package com.mateys.game;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
-import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.math.Vector2;
 
 public class Bullet extends Entity{
     private Vector2 velocity;
-    public static final int MOVE_SPEED = 1000;
-    protected int damage;
-    public boolean dead = false;
-    public float timeAlive = 0f;
-    protected float period;
+    private int damage;
+    private float timeElapsed = 0f;
+    private float bulletLifeSpan;
+    public static final int moveSpeed = 1000;
+    public boolean isDead = false;
 
 
     /**
@@ -20,10 +19,9 @@ public class Bullet extends Entity{
      * @param x the x position of the bullet
      * @param y the y position of the bullet
      */
-    public Bullet(float x, float y, float period){
+    public Bullet(float x, float y, float bulletLifeSpan){
         super(x, y);
-
-        this.period = period;
+        this.bulletLifeSpan = bulletLifeSpan;
         this.image = new Texture(Gdx.files.internal("cannonBall.png"));
         this.textureRegion = new TextureRegion(image);
         this.velocity = new Vector2(0, 0);
@@ -34,23 +32,24 @@ public class Bullet extends Entity{
     public void update(){
         this.position.add(velocity);
         super.update();
-
-        if (timeAlive > period) {
-            dead = true;
-        } else {
-            timeAlive += Gdx.graphics.getDeltaTime();
+        if(timer(bulletLifeSpan)){
+            this.isDead = true;
         }
     }
 
     /** @return the damage of the bullet */
     public int getDamage(){return this.damage;}
 
+    /**
+     * Sets the damage value of the bullet
+     * @param damage the damage as an integer
+     */
+    public void setDamage(int damage){this.damage = damage;}
+
 
     /** @return boolean value whether the bullet has existed for too long */
-    public boolean isDead() { return dead; }
+    public boolean isDead() { return isDead; }
 
-    /** @return the rect/hitbox of the bullet */
-    public Rectangle getRect(){return this.rect;}
 
     /**
      * sets the velocity of the bullet
@@ -61,19 +60,30 @@ public class Bullet extends Entity{
 
     /** sets the velocity of the bullet to the left */
     public void shootLeft(){
-        this.setVelocity(-MOVE_SPEED * Gdx.graphics.getDeltaTime(), 0);
+        this.setVelocity(-moveSpeed * Gdx.graphics.getDeltaTime(), 0);
     }
     /** sets the velocity of the bullet to the right */
     public void shootRight(){
-        this.setVelocity(MOVE_SPEED * Gdx.graphics.getDeltaTime(), 0);
+        this.setVelocity(moveSpeed * Gdx.graphics.getDeltaTime(), 0);
     }
     /** sets the velocity of the bullet upwards */
     public void shootUp(){
-        this.setVelocity(0, MOVE_SPEED * Gdx.graphics.getDeltaTime());
+        this.setVelocity(0, moveSpeed * Gdx.graphics.getDeltaTime());
     }
     /** sets the velocity of the bullet downwards*/
     public void shootDown(){
-        this.setVelocity(0, -MOVE_SPEED * Gdx.graphics.getDeltaTime());
+        this.setVelocity(0, -moveSpeed * Gdx.graphics.getDeltaTime());
+    }
+
+    private boolean timer(float period){
+        if (timeElapsed > period){
+            timeElapsed = 0f;
+            return true;
+        }
+        else{
+            timeElapsed += Gdx.graphics.getDeltaTime();
+            return false;
+        }
     }
 
     public void dispose() {
