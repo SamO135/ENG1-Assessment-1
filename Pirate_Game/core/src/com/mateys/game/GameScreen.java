@@ -65,10 +65,10 @@ public class GameScreen extends ScreenAdapter {
 
 
 		// create fonts
-		healthText = createTextFont(Gdx.files.internal("fonts/BlackSamsGold.ttf"), 100, Color.RED, 2f, Color.BLACK);
+		healthText = createTextFont(Gdx.files.internal("fonts/TreasureMapDeadhand-yLA3.ttf"), 100, Color.RED, 2f, Color.BLACK);
 		scoreText = createTextFont(Gdx.files.internal("fonts/TreasureMapDeadhand-yLA3.ttf"), 100, Color.WHITE, 2f, Color.BLACK);
 		goldText = createTextFont(Gdx.files.internal("fonts/TreasureMapDeadhand-yLA3.ttf"), 100, Color.GOLD, 2f, Color.BLACK);
-		islandText = createTextFont(Gdx.files.internal("fonts/CELTICHD.ttf"), 60, Color.WHITE, 1f, Color.BLACK);
+		islandText = createTextFont(Gdx.files.internal("fonts/TreasureMapDeadhand-yLA3.ttf"), 60, Color.WHITE, 1f, Color.BLACK);
 		hudText = createTextFont(Gdx.files.internal("fonts/TreasureMapDeadhand-yLA3.ttf"), 60, Color.WHITE, 2f, Color.BLACK);
 		completedTaskText = createTextFont(Gdx.files.internal("fonts/TreasureMapDeadhand-yLA3.ttf"), 60, Color.GREEN, 2f, Color.BLACK);
 
