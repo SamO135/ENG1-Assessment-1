@@ -2,6 +2,7 @@ package com.mateys.game;
 
 import com.badlogic.gdx.Input;
 import com.badlogic.gdx.ScreenAdapter;
+import com.badlogic.gdx.files.FileHandle;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
@@ -64,12 +65,12 @@ public class GameScreen extends ScreenAdapter {
 
 
 		// create fonts
-		healthText = createTextFont("fonts/BlackSamsGold.ttf", 100, Color.RED, 2f, Color.BLACK);
-		scoreText = createTextFont("fonts/TreasureMapDeadhand-yLA3.ttf", 100, Color.WHITE, 2f, Color.BLACK);
-		goldText = createTextFont("fonts/TreasureMapDeadhand-yLA3.ttf", 100, Color.GOLD, 2f, Color.BLACK);
-		islandText = createTextFont("fonts/CELTICHD.ttf", 60, Color.WHITE, 1f, Color.BLACK);
-		hudText = createTextFont("fonts/TreasureMapDeadhand-yLA3.ttf", 60, Color.WHITE, 2f, Color.BLACK);
-		completedTaskText = createTextFont("fonts/TreasureMapDeadhand-yLA3.ttf", 60, Color.GREEN, 2f, Color.BLACK);
+		healthText = createTextFont(Gdx.files.internal("fonts/BlackSamsGold.ttf"), 100, Color.RED, 2f, Color.BLACK);
+		scoreText = createTextFont(Gdx.files.internal("fonts/TreasureMapDeadhand-yLA3.ttf"), 100, Color.WHITE, 2f, Color.BLACK);
+		goldText = createTextFont(Gdx.files.internal("fonts/TreasureMapDeadhand-yLA3.ttf"), 100, Color.GOLD, 2f, Color.BLACK);
+		islandText = createTextFont(Gdx.files.internal("fonts/CELTICHD.ttf"), 60, Color.WHITE, 1f, Color.BLACK);
+		hudText = createTextFont(Gdx.files.internal("fonts/TreasureMapDeadhand-yLA3.ttf"), 60, Color.WHITE, 2f, Color.BLACK);
+		completedTaskText = createTextFont(Gdx.files.internal("fonts/TreasureMapDeadhand-yLA3.ttf"), 60, Color.GREEN, 2f, Color.BLACK);
 
 		// initialise camera
 		camera = new OrthographicCamera();
@@ -334,8 +335,8 @@ public class GameScreen extends ScreenAdapter {
 	 * @param borderColour The colour of the border
 	 * @return the resulting font as type BitmapFont
 	 */
-	private BitmapFont createTextFont(String fontPath, int fontSize, Color fontColour, float borderWidth, Color borderColour){
-		FreeTypeFontGenerator fontGenerator = new FreeTypeFontGenerator(Gdx.files.internal(fontPath));
+	private BitmapFont createTextFont(FileHandle fontPath, int fontSize, Color fontColour, float borderWidth, Color borderColour){
+		FreeTypeFontGenerator fontGenerator = new FreeTypeFontGenerator(fontPath);
 		FreeTypeFontGenerator.FreeTypeFontParameter fontParameter = new FreeTypeFontGenerator.FreeTypeFontParameter();
 		fontParameter.size = fontSize;
 		fontParameter.color = fontColour;
